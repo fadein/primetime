@@ -1372,7 +1372,7 @@ void
 factor_time(uintmax_t t) {
   struct factors factors;
 
-  printf(" t=[%lu]", t);
+  printf("%lu:", t);
 
   factor((unsigned long)t, &factors);
 

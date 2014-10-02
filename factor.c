@@ -131,7 +131,7 @@ struct factors
   unsigned char nfactors;
 };
 
-static void factor (uintmax_t, uintmax_t, struct factors *);
+static void factor (uintmax_t, struct factors *);
 
 #ifndef umul_ppmm
 # define umul_ppmm(w1, w0, u, v)                                        \
@@ -946,7 +946,7 @@ prime_p (uintmax_t n)
   if (flag_prove_primality)
     {
       /* Factor n-1 for Lucas.  */
-      factor (0, n - 1, &factors);
+      factor (n - 1, &factors);
     }
 
   /* Loop until Lucas proves our number prime, or Miller-Rabin proves our
@@ -1041,7 +1041,7 @@ prime2_p (uintmax_t n1, uintmax_t n0)
   if (flag_prove_primality)
     {
       /* Factor n-1 for Lucas.  */
-      factor (nm1[1], nm1[0], &factors);
+      factor (nm1[0], &factors);
     }
 
   /* Loop until Lucas proves our number prime, or Miller-Rabin proves our
@@ -1175,120 +1175,6 @@ factor_using_pollard_rho (uintmax_t n, unsigned long int a,
     }
 }
 
-static void
-factor_using_pollard_rho2 (uintmax_t n1, uintmax_t n0, unsigned long int a,
-                           struct factors *factors)
-{
-  uintmax_t x1, x0, z1, z0, y1, y0, P1, P0, t1, t0, ni, g1, g0, r1m;
-
-  unsigned long int k = 1;
-  unsigned long int l = 1;
-
-  redcify2 (P1, P0, 1, n1, n0);
-  addmod2 (x1, x0, P1, P0, P1, P0, n1, n0); /* i.e., redcify(2) */
-  y1 = z1 = x1;
-  y0 = z0 = x0;
-
-  while (n1 != 0 || n0 != 1)
-    {
-      binv (ni, n0);
-
-      for (;;)
-        {
-          do
-            {
-              x0 = mulredc2 (&r1m, x1, x0, x1, x0, n1, n0, ni);
-              x1 = r1m;
-              addmod2 (x1, x0, x1, x0, 0, (uintmax_t) a, n1, n0);
-
-              submod2 (t1, t0, z1, z0, x1, x0, n1, n0);
-              P0 = mulredc2 (&r1m, P1, P0, t1, t0, n1, n0, ni);
-              P1 = r1m;
-
-              if (k % 32 == 1)
-                {
-                  g0 = gcd2_odd (&g1, P1, P0, n1, n0);
-                  if (g1 != 0 || g0 != 1)
-                    goto factor_found;
-                  y1 = x1; y0 = x0;
-                }
-            }
-          while (--k != 0);
-
-          z1 = x1; z0 = x0;
-          k = l;
-          l = 2 * l;
-          for (unsigned long int i = 0; i < k; i++)
-            {
-              x0 = mulredc2 (&r1m, x1, x0, x1, x0, n1, n0, ni);
-              x1 = r1m;
-              addmod2 (x1, x0, x1, x0, 0, (uintmax_t) a, n1, n0);
-            }
-          y1 = x1; y0 = x0;
-        }
-
-    factor_found:
-      do
-        {
-          y0 = mulredc2 (&r1m, y1, y0, y1, y0, n1, n0, ni);
-          y1 = r1m;
-          addmod2 (y1, y0, y1, y0, 0, (uintmax_t) a, n1, n0);
-
-          submod2 (t1, t0, z1, z0, y1, y0, n1, n0);
-          g0 = gcd2_odd (&g1, t1, t0, n1, n0);
-        }
-      while (g1 == 0 && g0 == 1);
-
-      if (g1 == 0)
-        {
-          /* The found factor is one word. */
-          divexact_21 (n1, n0, n1, n0, g0);     /* n = n / g */
-
-          if (!prime_p (g0))
-            factor_using_pollard_rho (g0, a + 1, factors);
-          else
-            factor_insert (factors, g0);
-        }
-      else
-        {
-          /* The found factor is two words.  This is highly unlikely, thus hard
-             to trigger.  Please be careful before you change this code!  */
-          uintmax_t ginv;
-
-          binv (ginv, g0);      /* Compute n = n / g.  Since the result will */
-          n0 = ginv * n0;       /* fit one word, we can compute the quotient */
-          n1 = 0;               /* modulo B, ignoring the high divisor word. */
-
-          if (!prime2_p (g1, g0))
-            factor_using_pollard_rho2 (g1, g0, a + 1, factors);
-          else
-            factor_insert_large (factors, g1, g0);
-        }
-
-      if (n1 == 0)
-        {
-          if (prime_p (n0))
-            {
-              factor_insert (factors, n0);
-              break;
-            }
-
-          factor_using_pollard_rho (n0, a, factors);
-          return;
-        }
-
-      if (prime2_p (n1, n0))
-        {
-          factor_insert_large (factors, n1, n0);
-          break;
-        }
-
-      x0 = mod2 (&x1, x1, x0, n1, n0);
-      z0 = mod2 (&z1, z1, z0, n1, n0);
-      y0 = mod2 (&y1, y1, y0, n1, n0);
-    }
-}
-
 /* FIXME: Maybe better to use an iteration converging to 1/sqrt(n)?  If
    algorithm is replaced, consider also returning the remainder. */
 static uintmax_t
@@ -1357,31 +1243,6 @@ isqrt2 (uintmax_t nh, uintmax_t nl)
 
       x = y;
     }
-}
-
-/* MAGIC[N] has a bit i set iff i is a quadratic residue mod N. */
-#define MAGIC64 ((uint64_t) 0x0202021202030213ULL)
-#define MAGIC63 ((uint64_t) 0x0402483012450293ULL)
-#define MAGIC65 ((uint64_t) 0x218a019866014613ULL)
-#define MAGIC11 0x23b
-
-/* Return the square root if the input is a square, otherwise 0. */
-static uintmax_t
-is_square (uintmax_t x)
-{
-  /* Uses the tests suggested by Cohen. Excludes 99% of the non-squares before
-     computing the square root. */
-  if (((MAGIC64 >> (x & 63)) & 1)
-      && ((MAGIC63 >> (x % 63)) & 1)
-      /* Both 0 and 64 are squares mod (65) */
-      && ((MAGIC65 >> ((x % 65) & 63)) & 1)
-      && ((MAGIC11 >> (x % 11) & 1)))
-    {
-      uintmax_t r = isqrt (x);
-      if (r*r == x)
-        return r;
-    }
-  return 0;
 }
 
 /* invtab[i] = floor(0x10000 / (0x100 + i) */
@@ -1479,260 +1340,16 @@ static const unsigned short invtab[0x81] =
 #define QUEUE_SIZE 50
 
 
-/* Return true on success.  Expected to fail only for numbers
-   >= 2^{2*W_TYPE_SIZE - 2}, or close to that limit. */
-static bool
-factor_using_squfof (uintmax_t n1, uintmax_t n0, struct factors *factors)
-{
-  /* Uses algorithm and notation from
-
-     SQUARE FORM FACTORIZATION
-     JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
-
-     http://homes.cerias.purdue.edu/~ssw/squfof.pdf
-   */
-
-  static const unsigned int multipliers_1[] =
-    { /* = 1 (mod 4) */
-      105, 165, 21, 385, 33, 5, 77, 1, 0
-    };
-  static const unsigned int multipliers_3[] =
-    { /* = 3 (mod 4) */
-      1155, 15, 231, 35, 3, 55, 7, 11, 0
-    };
-
-  const unsigned int *m;
-
-  struct { uintmax_t Q; uintmax_t P; } queue[QUEUE_SIZE];
-
-  if (n1 >= ((uintmax_t) 1 << (W_TYPE_SIZE - 2)))
-    return false;
-
-  uintmax_t sqrt_n = isqrt2 (n1, n0);
-
-  if (n0 == sqrt_n * sqrt_n)
-    {
-      uintmax_t p1, p0;
-
-      umul_ppmm (p1, p0, sqrt_n, sqrt_n);
-      assert (p0 == n0);
-
-      if (n1 == p1)
-        {
-          if (prime_p (sqrt_n))
-            factor_insert_multiplicity (factors, sqrt_n, 2);
-          else
-            {
-              struct factors f;
-
-              f.nfactors = 0;
-              if (!factor_using_squfof (0, sqrt_n, &f))
-                {
-                  /* Try pollard rho instead */
-                  factor_using_pollard_rho (sqrt_n, 1, &f);
-                }
-              /* Duplicate the new factors */
-              for (unsigned int i = 0; i < f.nfactors; i++)
-                factor_insert_multiplicity (factors, f.p[i], 2*f.e[i]);
-            }
-          return true;
-        }
-    }
-
-  /* Select multipliers so we always get n * mu = 3 (mod 4) */
-  for (m = (n0 % 4 == 1) ? multipliers_3 : multipliers_1;
-       *m; m++)
-    {
-      uintmax_t S, Dh, Dl, Q1, Q, P, L, L1, B;
-      unsigned int i;
-      unsigned int mu = *m;
-      unsigned int qpos = 0;
-
-      assert (mu * n0 % 4 == 3);
-
-      /* In the notation of the paper, with mu * n == 3 (mod 4), we
-         get \Delta = 4 mu * n, and the paper's \mu is 2 mu. As far as
-         I understand it, the necessary bound is 4 \mu^3 < n, or 32
-         mu^3 < n.
-
-         However, this seems insufficient: With n = 37243139 and mu =
-         105, we get a trivial factor, from the square 38809 = 197^2,
-         without any corresponding Q earlier in the iteration.
-
-         Requiring 64 mu^3 < n seems sufficient. */
-      if (n1 == 0)
-        {
-          if ((uintmax_t) mu*mu*mu >= n0 / 64)
-            continue;
-        }
-      else
-        {
-          if (n1 > ((uintmax_t) 1 << (W_TYPE_SIZE - 2)) / mu)
-            continue;
-        }
-      umul_ppmm (Dh, Dl, n0, mu);
-      Dh += n1 * mu;
-
-      assert (Dl % 4 != 1);
-      assert (Dh < (uintmax_t) 1 << (W_TYPE_SIZE - 2));
-
-      S = isqrt2 (Dh, Dl);
-
-      Q1 = 1;
-      P = S;
-
-      /* Square root remainder fits in one word, so ignore high part. */
-      Q = Dl - P*P;
-      /* FIXME: When can this differ from floor(sqrt(2 sqrt(D)))? */
-      L = isqrt (2*S);
-      B = 2*L;
-      L1 = mu * 2 * L;
-
-      /* The form is (+/- Q1, 2P, -/+ Q), of discriminant 4 (P^2 + Q Q1) =
-         4 D. */
-
-      for (i = 0; i <= B; i++)
-        {
-          uintmax_t q, P1, t, rem;
-
-          div_smallq (q, rem, S+P, Q);
-          P1 = S - rem; /* P1 = q*Q - P */
-
-          if (Q <= L1)
-            {
-              uintmax_t g = Q;
-
-              if ( (Q & 1) == 0)
-                g /= 2;
-
-              g /= gcd_odd (g, mu);
-
-              if (g <= L)
-                {
-                  if (qpos >= QUEUE_SIZE)
-                    error (EXIT_FAILURE, 0, _("squfof queue overflow"));
-                  queue[qpos].Q = g;
-                  queue[qpos].P = P % g;
-                  qpos++;
-                }
-            }
-
-          /* I think the difference can be either sign, but mod
-             2^W_TYPE_SIZE arithmetic should be fine. */
-          t = Q1 + q * (P - P1);
-          Q1 = Q;
-          Q = t;
-          P = P1;
-
-          if ( (i & 1) == 0)
-            {
-              uintmax_t r = is_square (Q);
-              if (r)
-                {
-                  for (unsigned int j = 0; j < qpos; j++)
-                    {
-                      if (queue[j].Q == r)
-                        {
-                          if (r == 1)
-                            /* Traversed entire cycle. */
-                            goto next_multiplier;
-
-                          /* Need the absolute value for divisibility test. */
-                          if (P >= queue[j].P)
-                            t = P - queue[j].P;
-                          else
-                            t = queue[j].P - P;
-                          if (t % r == 0)
-                            {
-                              /* Delete entries up to and including entry
-                                 j, which matched. */
-                              memmove (queue, queue + j + 1,
-                                       (qpos - j - 1) * sizeof (queue[0]));
-                              qpos -= (j + 1);
-                            }
-                          goto next_i;
-                        }
-                    }
-
-                  /* We have found a square form, which should give a
-                     factor. */
-                  Q1 = r;
-                  assert (S >= P); /* What signs are possible? */
-                  P += r * ((S - P) / r);
-
-                  /* Note: Paper says (N - P*P) / Q1, that seems incorrect
-                     for the case D = 2N. */
-                  /* Compute Q = (D - P*P) / Q1, but we need double
-                     precision. */
-                  uintmax_t hi, lo;
-                  umul_ppmm (hi, lo, P, P);
-                  sub_ddmmss (hi, lo, Dh, Dl, hi, lo);
-                  udiv_qrnnd (Q, rem, hi, lo, Q1);
-                  assert (rem == 0);
-
-                  for (;;)
-                    {
-                      /* Note: There appears to by a typo in the paper,
-                         Step 4a in the algorithm description says q <--
-                         floor([S+P]/\hat Q), but looking at the equations
-                         in Sec. 3.1, it should be q <-- floor([S+P] / Q).
-                         (In this code, \hat Q is Q1). */
-                      div_smallq (q, rem, S+P, Q);
-                      P1 = S - rem;     /* P1 = q*Q - P */
-
-                      if (P == P1)
-                        break;
-                      t = Q1 + q * (P - P1);
-                      Q1 = Q;
-                      Q = t;
-                      P = P1;
-                    }
-
-                  if ( (Q & 1) == 0)
-                    Q /= 2;
-                  Q /= gcd_odd (Q, mu);
-
-                  assert (Q > 1 && (n1 || Q < n0));
-
-                  if (prime_p (Q))
-                    factor_insert (factors, Q);
-                  else if (!factor_using_squfof (0, Q, factors))
-                    factor_using_pollard_rho (Q, 2, factors);
-
-                  divexact_21 (n1, n0, n1, n0, Q);
-
-                  if (prime2_p (n1, n0))
-                    factor_insert_large (factors, n1, n0);
-                  else
-                    {
-                      if (!factor_using_squfof (n1, n0, factors))
-                        {
-                          if (n1 == 0)
-                            factor_using_pollard_rho (n0, 1, factors);
-                          else
-                            factor_using_pollard_rho2 (n1, n0, 1, factors);
-                        }
-                    }
-
-                  return true;
-                }
-            }
-        next_i:;
-        }
-    next_multiplier:;
-    }
-  return false;
-}
-
 /* Compute the prime factors of the 128-bit number (T1,T0), and put the
    results in FACTORS.  Use the algorithm selected by the global ALG.  */
 static void
-factor (uintmax_t t1, uintmax_t t0, struct factors *factors)
+factor (uintmax_t t0, struct factors *factors)
 {
+  uintmax_t t1 = 0;
   factors->nfactors = 0;
   factors->plarge[1] = 0;
 
-  if (t1 == 0 && t0 < 2)
+  if (t0 < 2)
     return;
 
   t0 = factor_using_division (&t1, t1, t0, factors);
@@ -1744,32 +1361,27 @@ factor (uintmax_t t1, uintmax_t t0, struct factors *factors)
     factor_insert_large (factors, t1, t0);
   else
     {
-      if (alg == ALG_SQUFOF)
-        if (factor_using_squfof (t1, t0, factors))
-          return;
-
       if (t1 == 0)
         factor_using_pollard_rho (t0, 1, factors);
       else
-        factor_using_pollard_rho2 (t1, t0, 1, factors);
+      error(0, 0, "I got rid of factor_using_pollard_rho2!!!");
     }
 }
 
 void
 factor_time(uintmax_t t) {
-	struct factors factors;
+  struct factors factors;
 
-	printf(" t=[%lu]", t);
+  printf(" t=[%lu]", t);
 
-	factor(0, (unsigned long)t, &factors);
+  factor((unsigned long)t, &factors);
 
-	for (unsigned int j = 0; j < factors.nfactors; j++)
-		for (unsigned int k = 0; k < factors.e[j]; k++)
-		{
-			char buf[INT_BUFSIZE_BOUND (uintmax_t)];
-			putchar (' ');
-			fputs (umaxtostr (factors.p[j], buf), stdout);
-		}
-	putchar ('\n');
+  for (unsigned int j = 0; j < factors.nfactors; j++)
+    for (unsigned int k = 0; k < factors.e[j]; k++)
+    {
+      printf(" %lu", factors.p[j]);
+    }
+  putchar ('\n');
 }
 
+/* set tabstop=2 shiftwidth=2 expandtab */

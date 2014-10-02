@@ -92,7 +92,7 @@
 #include <assert.h>
 
 //#include "system.h"
-//#include "error.h"
+#include <error.h>
 //#include "quote.h"
 //#include "xstrtol.h"
 
@@ -992,8 +992,8 @@ prime_p (uintmax_t n)
         return false;
     }
 
-  error (0, 0, _("Lucas prime test failure.  This should not happen"));
-  abort ();
+  error (0, 0, "Lucas prime test failure.  This should not happen");
+  return false;
 }
 
 static bool
@@ -1092,8 +1092,8 @@ prime2_p (uintmax_t n1, uintmax_t n0)
         return false;
     }
 
-  error (0, 0, _("Lucas prime test failure.  This should not happen"));
-  abort ();
+  error (0, 0, "Lucas prime test failure.  This should not happen");
+  return false;
 }
 
 static void

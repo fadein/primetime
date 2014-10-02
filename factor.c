@@ -84,117 +84,31 @@
       the -w option.
 */
 
-#include <config.h>
+//#include <config.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <sys/time.h>
 
 #include <assert.h>
 
-#include "system.h"
-#include "error.h"
-#include "quote.h"
-#include "readtokens.h"
-#include "xstrtol.h"
+//#include "system.h"
+//#include "error.h"
+//#include "quote.h"
+//#include "xstrtol.h"
 
-/* The official name of this program (e.g., no 'g' prefix).  */
-#define PROGRAM_NAME "factor"
+typedef unsigned long uintmax_t;
+typedef long int intmax_t;
+typedef int bool;
 
-#define AUTHORS \
-  proper_name ("Paul Rubin"),                                           \
-  proper_name_utf8 ("Torbjorn Granlund", "Torbj\303\266rn Granlund"),   \
-  proper_name_utf8 ("Niels Moller", "Niels M\303\266ller")
-
-/* Token delimiters when reading from a file.  */
-#define DELIM "\n\t "
-
-#ifndef STAT_SQUFOF
-# define STAT_SQUFOF 0
-#endif
-
-#ifndef USE_LONGLONG_H
-/* With the way we use longlong.h, it's only safe to use
-   when UWtype = UHWtype, as there were various cases
-   (as can be seen in the history for longlong.h) where
-   for example, _LP64 was required to enable W_TYPE_SIZE==64 code,
-   to avoid compile time or run time issues.  */
-# if LONG_MAX == INTMAX_MAX
-#  define USE_LONGLONG_H 1
-# endif
-#endif
-
-#if USE_LONGLONG_H
-
-/* Make definitions for longlong.h to make it do what it can do for us */
-
-/* bitcount for uintmax_t */
-# if UINTMAX_MAX == UINT32_MAX
-#  define W_TYPE_SIZE 32
-# elif UINTMAX_MAX == UINT64_MAX
-#  define W_TYPE_SIZE 64
-# elif UINTMAX_MAX == UINT128_MAX
-#  define W_TYPE_SIZE 128
-# endif
-
-# define UWtype  uintmax_t
-# define UHWtype unsigned long int
-# undef UDWtype
-# if HAVE_ATTRIBUTE_MODE
-typedef unsigned int UQItype    __attribute__ ((mode (QI)));
-typedef          int SItype     __attribute__ ((mode (SI)));
-typedef unsigned int USItype    __attribute__ ((mode (SI)));
-typedef          int DItype     __attribute__ ((mode (DI)));
-typedef unsigned int UDItype    __attribute__ ((mode (DI)));
-# else
-typedef unsigned char UQItype;
-typedef          long SItype;
-typedef unsigned long int USItype;
-#  if HAVE_LONG_LONG_INT
-typedef long long int DItype;
-typedef unsigned long long int UDItype;
-#  else /* Assume `long' gives us a wide enough type.  Needed for hppa2.0w.  */
-typedef long int DItype;
-typedef unsigned long int UDItype;
-#  endif
-# endif
-# define LONGLONG_STANDALONE     /* Don't require GMP's longlong.h mdep files */
-# define ASSERT(x)               /* FIXME make longlong.h really standalone */
-# define __GMP_DECLSPEC          /* FIXME make longlong.h really standalone */
-# define __clz_tab factor_clz_tab /* Rename to avoid glibc collision */
-# ifndef __GMP_GNUC_PREREQ
-#  define __GMP_GNUC_PREREQ(a,b) 1
-# endif
-
-/* These stub macros are only used in longlong.h in certain system compiler
-   combinations, so ensure usage to avoid -Wunused-macros warnings.  */
-# if __GMP_GNUC_PREREQ (1,1) && defined __clz_tab
-ASSERT (1)
-__GMP_DECLSPEC
-# endif
-
-# if _ARCH_PPC
-#  define HAVE_HOST_CPU_FAMILY_powerpc 1
-# endif
-# include "longlong.h"
-# ifdef COUNT_LEADING_ZEROS_NEED_CLZ_TAB
-const unsigned char factor_clz_tab[129] =
-{
-  1,2,3,3,4,4,4,4,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-  8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-  8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-  9
-};
-# endif
-
-#else /* not USE_LONGLONG_H */
+#define false 0
+#define true 1
+#define UINTMAX_MAX ((unsigned long)4294967295)
+#define CHAR_BIT 8
 
 # define W_TYPE_SIZE (8 * sizeof (uintmax_t))
 # define __ll_B ((uintmax_t) 1 << (W_TYPE_SIZE / 2))
 # define __ll_lowpart(t)  ((uintmax_t) (t) & (__ll_B - 1))
 # define __ll_highpart(t) ((uintmax_t) (t) >> (W_TYPE_SIZE / 2))
-
-#endif
 
 #if !defined __clz_tab && !defined UHWtype
 /* Without this seemingly useless conditional, gcc -Wunused-macros
@@ -208,19 +122,6 @@ static enum alg_type alg;
 
 /* 2*3*5*7*11...*101 is 128 bits, and has 26 prime factors */
 #define MAX_NFACTS 26
-
-enum
-{
-  DEV_DEBUG_OPTION = CHAR_MAX + 1
-};
-
-static struct option const long_options[] =
-{
-  {"-debug", no_argument, NULL, DEV_DEBUG_OPTION},
-  {GETOPT_HELP_OPTION_DECL},
-  {GETOPT_VERSION_OPTION_DECL},
-  {NULL, 0, NULL, 0}
-};
 
 struct factors
 {
@@ -414,7 +315,7 @@ mod2 (uintmax_t *r1, uintmax_t a1, uintmax_t a0, uintmax_t d1, uintmax_t d0)
   return a0;
 }
 
-static uintmax_t _GL_ATTRIBUTE_CONST
+static uintmax_t
 gcd_odd (uintmax_t a, uintmax_t b)
 {
   if ( (b & 1) == 0)
@@ -543,9 +444,6 @@ factor_insert_large (struct factors *factors,
 /* Number of bits in an uintmax_t.  */
 enum { W = sizeof (uintmax_t) * CHAR_BIT };
 
-/* Verify that uintmax_t does not have holes in its representation.  */
-verify (UINTMAX_MAX >> (W - 1) == 1);
-
 #define P(a,b,c,d) a,
 static const unsigned char primes_diff[] = {
 #include "primes.h"
@@ -574,10 +472,6 @@ static const struct primes_dtab primes_dtab[] = {
 {1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0} /* 7 sentinels for 8-way loop */
 };
 #undef P
-
-/* Verify that uintmax_t is not wider than
-   the integers used to generate primes.h.  */
-verify (W <= WIDE_UINT_BITS);
 
 /* debugging for developers.  Enables devmsg().
    This flag is used only in the GMP code.  */
@@ -669,7 +563,7 @@ factor_using_division (uintmax_t *t1p, uintmax_t t1, uintmax_t t0,
     {
       for (;;)
         {
-          uintmax_t q1, q0, hi, lo _GL_UNUSED;
+          uintmax_t q1, q0, hi, lo;
 
           q0 = t0 * primes_dtab[i].binv;
           umul_ppmm (hi, lo, q0, p);
@@ -773,7 +667,7 @@ static const unsigned char  binvert_table[128] =
     _q0 = (u0) * _di;                                                   \
     if ((u1) >= (d))                                                    \
       {                                                                 \
-        uintmax_t _p1, _p0 _GL_UNUSED;                            \
+        uintmax_t _p1, _p0;                            \
         umul_ppmm (_p1, _p0, _q0, d);                                   \
         (q1) = ((u1) - _p1) * _di;                                      \
         (q0) = _q0;                                                     \
@@ -788,7 +682,7 @@ static const unsigned char  binvert_table[128] =
 /* x B (mod n). */
 #define redcify(r_prim, r, n)                                           \
   do {                                                                  \
-    uintmax_t _redcify_q _GL_UNUSED;                              \
+    uintmax_t _redcify_q;                              \
     udiv_qrnnd (_redcify_q, r_prim, r, 0, n);                           \
   } while (0)
 
@@ -821,7 +715,7 @@ static const unsigned char  binvert_table[128] =
 static inline uintmax_t
 mulredc (uintmax_t a, uintmax_t b, uintmax_t m, uintmax_t mi)
 {
-  uintmax_t rh, rl, q, th, tl _GL_UNUSED, xh;
+  uintmax_t rh, rl, q, th, tl, xh;
 
   umul_ppmm (rh, rl, a, b);
   q = rl * mi;
@@ -841,7 +735,7 @@ mulredc2 (uintmax_t *r1p,
           uintmax_t a1, uintmax_t a0, uintmax_t b1, uintmax_t b0,
           uintmax_t m1, uintmax_t m0, uintmax_t mi)
 {
-  uintmax_t r1, r0, q, p1, p0 _GL_UNUSED, t1, t0, s1, s0;
+  uintmax_t r1, r0, q, p1, p0, t1, t0, s1, s0;
   mi = -mi;
   assert ( (a1 >> (W_TYPE_SIZE - 1)) == 0);
   assert ( (b1 >> (W_TYPE_SIZE - 1)) == 0);
@@ -904,7 +798,7 @@ mulredc2 (uintmax_t *r1p,
   return r0;
 }
 
-static uintmax_t _GL_ATTRIBUTE_CONST
+static uintmax_t
 powm (uintmax_t b, uintmax_t e, uintmax_t n, uintmax_t ni, uintmax_t one)
 {
   uintmax_t y = one;
@@ -965,7 +859,7 @@ powm2 (uintmax_t *r1m,
   return r0;
 }
 
-static bool _GL_ATTRIBUTE_CONST
+static bool
 millerrabin (uintmax_t n, uintmax_t ni, uintmax_t b, uintmax_t q,
              unsigned int k, uintmax_t one)
 {
@@ -1089,7 +983,7 @@ prime_p (uintmax_t n)
           a_prim = s0 % n;
         else
           {
-            uintmax_t dummy _GL_UNUSED;
+            uintmax_t dummy;
             udiv_qrnnd (dummy, a_prim, s1, s0, n);
           }
       }
@@ -1397,7 +1291,7 @@ factor_using_pollard_rho2 (uintmax_t n1, uintmax_t n0, unsigned long int a,
 
 /* FIXME: Maybe better to use an iteration converging to 1/sqrt(n)?  If
    algorithm is replaced, consider also returning the remainder. */
-static uintmax_t _GL_ATTRIBUTE_CONST
+static uintmax_t
 isqrt (uintmax_t n)
 {
   uintmax_t x;
@@ -1420,7 +1314,7 @@ isqrt (uintmax_t n)
     }
 }
 
-static uintmax_t _GL_ATTRIBUTE_CONST
+static uintmax_t
 isqrt2 (uintmax_t nh, uintmax_t nl)
 {
   unsigned int shift;
@@ -1442,7 +1336,7 @@ isqrt2 (uintmax_t nh, uintmax_t nl)
   /* Do we need more than one iteration? */
   for (;;)
     {
-      uintmax_t r _GL_UNUSED;
+      uintmax_t r;
       uintmax_t q, y;
       udiv_qrnnd (q, r, nh, nl, x);
       y = (x + q) / 2;
@@ -1472,7 +1366,7 @@ isqrt2 (uintmax_t nh, uintmax_t nl)
 #define MAGIC11 0x23b
 
 /* Return the square root if the input is a square, otherwise 0. */
-static uintmax_t _GL_ATTRIBUTE_CONST
+static uintmax_t
 is_square (uintmax_t x)
 {
   /* Uses the tests suggested by Cohen. Excludes 99% of the non-squares before
@@ -1584,12 +1478,6 @@ static const unsigned short invtab[0x81] =
 */
 #define QUEUE_SIZE 50
 
-#if STAT_SQUFOF
-# define Q_FREQ_SIZE 50
-/* Element 0 keeps the total */
-static unsigned int q_freq[Q_FREQ_SIZE + 1];
-# define MIN(a,b) ((a) < (b) ? (a) : (b))
-#endif
 
 /* Return true on success.  Expected to fail only for numbers
    >= 2^{2*W_TYPE_SIZE - 2}, or close to that limit. */
@@ -1710,12 +1598,6 @@ factor_using_squfof (uintmax_t n1, uintmax_t n0, struct factors *factors)
           div_smallq (q, rem, S+P, Q);
           P1 = S - rem; /* P1 = q*Q - P */
 
-#if STAT_SQUFOF
-          assert (q > 0);
-          q_freq[0]++;
-          q_freq[MIN (q, Q_FREQ_SIZE)]++;
-#endif
-
           if (Q <= L1)
             {
               uintmax_t g = Q;
@@ -1798,10 +1680,6 @@ factor_using_squfof (uintmax_t n1, uintmax_t n0, struct factors *factors)
                       div_smallq (q, rem, S+P, Q);
                       P1 = S - rem;     /* P1 = q*Q - P */
 
-#if STAT_SQUFOF
-                      q_freq[0]++;
-                      q_freq[MIN (q, Q_FREQ_SIZE)]++;
-#endif
                       if (P == P1)
                         break;
                       t = Q1 + q * (P - P1);
@@ -1877,101 +1755,6 @@ factor (uintmax_t t1, uintmax_t t0, struct factors *factors)
     }
 }
 
-static strtol_error
-strto2uintmax (uintmax_t *hip, uintmax_t *lop, const char *s)
-{
-  unsigned int lo_carry;
-  uintmax_t hi = 0, lo = 0;
-
-  strtol_error err = LONGINT_INVALID;
-
-  /* Skip initial spaces and '+'.  */
-  for (;;)
-    {
-      char c = *s;
-      if (c == ' ')
-        s++;
-      else if (c == '+')
-        {
-          s++;
-          break;
-        }
-      else
-        break;
-    }
-
-  /* Initial scan for invalid digits.  */
-  const char *p = s;
-  for (;;)
-    {
-      unsigned int c = *p++;
-      if (c == 0)
-        break;
-
-      if (UNLIKELY (!ISDIGIT (c)))
-        {
-          err = LONGINT_INVALID;
-          break;
-        }
-
-      err = LONGINT_OK;           /* we've seen at least one valid digit */
-    }
-
-  for (;err == LONGINT_OK;)
-    {
-      unsigned int c = *s++;
-      if (c == 0)
-        break;
-
-      c -= '0';
-
-      if (UNLIKELY (hi > ~(uintmax_t)0 / 10))
-        {
-          err = LONGINT_OVERFLOW;
-          break;
-        }
-      hi = 10 * hi;
-
-      lo_carry = (lo >> (W_TYPE_SIZE - 3)) + (lo >> (W_TYPE_SIZE - 1));
-      lo_carry += 10 * lo < 2 * lo;
-
-      lo = 10 * lo;
-      lo += c;
-
-      lo_carry += lo < c;
-      hi += lo_carry;
-      if (UNLIKELY (hi < lo_carry))
-        {
-          err = LONGINT_OVERFLOW;
-          break;
-        }
-    }
-
-  *hip = hi;
-  *lop = lo;
-
-  return err;
-}
-
-static void
-print_uintmaxes (uintmax_t t1, uintmax_t t0)
-{
-  uintmax_t q, r;
-
-  if (t1 == 0)
-    printf ("%"PRIuMAX, t0);
-  else
-    {
-      /* Use very plain code here since it seems hard to write fast code
-         without assuming a specific word size.  */
-      q = t1 / 1000000000;
-      r = t1 % 1000000000;
-      udiv_qrnnd (t0, r, r, t0, 1000000000);
-      print_uintmaxes (q, t0);
-      printf ("%09u", (int) r);
-    }
-}
-
 void
 factor_time(uintmax_t t) {
 	struct factors factors;
@@ -1989,32 +1772,4 @@ factor_time(uintmax_t t) {
 		}
 	putchar ('\n');
 }
-
-/* Single-precision factoring */
-static void
-print_factors_single (uintmax_t t1, uintmax_t t0)
-{
-  struct factors factors;
-
-  print_uintmaxes (t1, t0);
-  putchar (':');
-
-  factor (t1, t0, &factors);
-
-  for (unsigned int j = 0; j < factors.nfactors; j++)
-    for (unsigned int k = 0; k < factors.e[j]; k++)
-      {
-        char buf[INT_BUFSIZE_BOUND (uintmax_t)];
-        putchar (' ');
-        fputs (umaxtostr (factors.p[j], buf), stdout);
-      }
-
-  if (factors.plarge[1])
-    {
-      putchar (' ');
-      print_uintmaxes (factors.plarge[1], factors.plarge[0]);
-    }
-  putchar ('\n');
-}
-
 

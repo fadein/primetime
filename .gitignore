@@ -1,3 +1,5 @@
 *.o
 factor
 primetime
+tags
+cscope.out

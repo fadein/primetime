@@ -2,6 +2,7 @@
 
 ;; DEBUGGING
 ;(set! current-seconds (lambda () 1412316039.0))
+;(set! current-seconds (lambda () 1412360565.0))
 
 ;; make ready for the factor_time C function
 (define factor-time (foreign-lambda void "factor_time"
@@ -15,18 +16,21 @@
 (define u32factors (make-u32vector *MAX-FACTORS*))
 
 ;; Prepare the color cycle for output
-(define colors
-  (concatenate
-	(list
-	  (make-list 2 '(bold fg-magenta))
-	  (make-list 2 '(bold fg-red))
-	  (make-list 3 '(bold fg-white))
-	  (make-list 5 '(bold fg-yellow))
-	  (make-list 7 '(bold fg-green))
-	  (make-list 11 '(bold fg-cyan))
-	  (make-list 13 '(bold fg-blue)))))
+(define prime-colors #f)
+(define twin-prime-colors #f)
 
-(set-cdr! (last-pair colors) (circular-list '(bold fg-black)))
+(let ((colors
+		(concatenate
+		  (list
+			(make-list 3 '(bold fg-white))
+			(make-list 5 '(bold fg-yellow))
+			(make-list 7 '(bold fg-green))
+			(make-list 11 '(bold fg-cyan))
+			(make-list 13 '(bold fg-blue))))))
+  (set! prime-colors
+	(append (make-list 2 '(bold fg-red)) colors))
+  (set! twin-prime-colors
+	(append (make-list 2 '(bold fg-magenta)) colors)))
 
 ;; print startup banner
 (print* (set-text '(bold bg-red fg-white)
@@ -34,7 +38,7 @@
 
 (let ((start (time->seconds (current-time)))
 	  (now (current-seconds)))
-  (let loop ((x 1) (now now) (prev-prime 1000) (c (cdddr colors)))
+  (let loop ((x 1) (now now) (prev-prime 1000) (c (cdr prime-colors)))
 
 	(let-syntax ((doloop
 				   (syntax-rules ()
@@ -54,14 +58,14 @@
 
 		(cond ((and prime? (= prev-prime 1))
 			   (doloop
-				 colors
+				 twin-prime-colors
 				 (string-append now-str
 								": ** *** ***** ******* TWIN PRIME!!! *********** *************")
 				 0))
 
 			  (prime?
 				(doloop
-				  (cddr colors)
+				  prime-colors
 				  (string-append now-str
 								 ": ** *** ***** ******* PRIME TIME! *********** *************")
 				  0))

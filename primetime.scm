@@ -3,6 +3,7 @@
 ;; DEBUGGING
 ;(set! current-seconds (lambda () 1412316039.0))
 
+;; make ready for the factor_time C function
 (define factor-time (foreign-lambda void "factor_time"
 									unsigned-integer32
 									u32vector
@@ -10,6 +11,10 @@
 
 (define *MAX-FACTORS* 26)
 
+;; an array of unsigned ints to write prime factors into as a side-effect
+(define u32factors (make-u32vector *MAX-FACTORS*))
+
+;; Prepare the color cycle for output
 (define colors
   (concatenate
 	(list
@@ -23,19 +28,19 @@
 
 (set-cdr! (last-pair colors) (circular-list '(bold fg-black)))
 
-(define beginner (cdddr colors))
-
-(define u32factors (make-u32vector *MAX-FACTORS*))
+;; print startup banner
+(print* (set-text '(bold bg-red fg-white)
+				  "** *** ***** ******* It's PRIME TIME! *********** *************"))
 
 (let ((start (time->seconds (current-time)))
 	  (now (current-seconds)))
-  (let loop ((x 1) (now now) (prev-prime 1000) (c beginner))
+  (let loop ((x 1) (now now) (prev-prime 1000) (c (cdddr colors)))
 
 	(let-syntax ((doloop
 				   (syntax-rules ()
 								 ((_ cc tt pp)
 								  (begin
-									(print (set-text (car cc) tt))
+									(print* "\n" (set-text (car cc) tt))
 									(thread-sleep! (seconds->time (+ x start)))
 									(loop (+ 1 x) (+ 1 now) pp cc))))))
 
@@ -50,13 +55,15 @@
 		(cond ((and prime? (= prev-prime 1))
 			   (doloop
 				 colors
-				 (string-append now-str ": ******************** TWIN PRIME!!! ********************")
+				 (string-append now-str
+								": ** *** ***** ******* TWIN PRIME!!! *********** *************")
 				 0))
 
 			  (prime?
 				(doloop
 				  (cddr colors)
-				  (string-append now-str ": ********** PRIME TIME! **********")
+				  (string-append now-str
+								 ": ** *** ***** ******* PRIME TIME! *********** *************")
 				  0))
 
 			  (else

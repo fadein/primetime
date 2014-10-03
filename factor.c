@@ -90,20 +90,20 @@
 #include <sys/time.h>
 
 #include <assert.h>
+#include <limits.h>
 
 //#include "system.h"
 #include <error.h>
 //#include "quote.h"
 //#include "xstrtol.h"
 
-typedef unsigned long uintmax_t;
-typedef long int intmax_t;
+typedef unsigned uintmax_t;
+typedef int intmax_t;
 typedef int bool;
 
 #define false 0
 #define true 1
-#define UINTMAX_MAX ((unsigned long)4294967295)
-#define CHAR_BIT 8
+#define UINTMAX_MAX (UINT_MAX)
 
 # define W_TYPE_SIZE (8 * sizeof (uintmax_t))
 # define __ll_B ((uintmax_t) 1 << (W_TYPE_SIZE / 2))
@@ -1369,19 +1369,26 @@ factor (uintmax_t t0, struct factors *factors)
 }
 
 void
-factor_time(uintmax_t t, unsigned long* facts, int len) {
+factor_time(uintmax_t t, unsigned* facts, int len) {
   struct factors factors;
 
-  printf("%lu:", t);
+#ifdef DEBUG
+  printf("%u:", t);
+#endif
 
   factor((unsigned long)t, &factors);
 
   facts[0] = factors.nfactors;
-  for (unsigned int j = 0; j < factors.nfactors && j < len; j++) {
+  for (unsigned int j = 0; j < factors.nfactors && j < len; j++)
+#ifdef DEBUG
+  {
+#endif
 	  facts[j+1] = factors.p[j];
-	  printf(" %lu", factors.p[j]);
+#ifdef DEBUG
+	  printf(" %u", factors.p[j]);
   }
   putchar('\n');
+#endif
 }
 
 /* set tabstop=2 shiftwidth=2 expandtab */

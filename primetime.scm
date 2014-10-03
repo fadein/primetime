@@ -1,4 +1,4 @@
-(use posix srfi-4 srfi-18)
+(use posix srfi-4 srfi-18 ansi-escape-sequences)
 
 ;; DEBUGGING
 ;(set! current-seconds (lambda () 1412316039.0))
@@ -10,18 +10,34 @@
 
 (define *MAX-SIZE* 30)
 
+(define colors
+  (concatenate
+	(list
+	  (make-list 2 '(bold fg-magenta))
+	  (make-list 2 '(bold fg-red))
+	  (make-list 3 '(bold fg-white))
+	  (make-list 4 '(bold fg-yellow))
+	  (make-list 5 '(bold fg-green))
+	  (make-list 6 '(bold fg-cyan))
+	  (make-list 7 '(bold fg-blue)))))
+
+(set-cdr! (last-pair colors) (circular-list '(bold fg-black)))
+
+(define beginner (cdddr colors))
+
 (define u32factors (make-u32vector *MAX-SIZE*))
 
 (let ((start (time->seconds (current-time)))
 	  (now (inexact->exact (current-seconds))))
-  (let loop ((x 1) (now now) (prev-prime 1000))
+  (let loop ((x 1) (now now) (prev-prime 1000) (c beginner))
 
 	(let-syntax ((doloop
 				   (syntax-rules ()
-								 ((_ pp)
+								 ((_ cc tt pp)
 								  (begin
+									(print (set-text (car cc) tt))
 									(thread-sleep! (seconds->time (+ x start)))
-									(loop (+ 1 x) (+ 1 now) pp))))))
+									(loop (+ 1 x) (+ 1 now) pp cc))))))
 
 	  ; call the C function and put the list of factors into u32factors
 	  (factor-time now u32factors *MAX-SIZE*)
@@ -31,14 +47,20 @@
 			 (prime? (= 1 n)))
 
 		(cond ((and prime? (= prev-prime 1))
-			   (printf "~a: TWIN PRIME!!!~n" now)
-			   (doloop 0))
+			   (doloop
+				 colors
+				 (conc now ": ******************** TWIN PRIME!!! ********************")
+				 0))
 
 			  (prime?
-				(printf "~a: PRIME TIME!!!~n" now)
-				(doloop 0))
+				(doloop
+				  (cddr colors)
+				  (conc now ": ********** PRIME TIME! **********")
+				  0))
 
 			  (else
 				(let ((factors (subu32vector u32factors 1 (+ 1 n))))
-				  (print now ": " (u32vector->list factors))
-				  (doloop (+ 1 prev-prime)))))))))
+				  (doloop
+					(cdr c)
+					(conc now ": " (u32vector->list factors))
+					(+ 1 prev-prime)))))))))

@@ -1,8 +1,7 @@
 (use srfi-18)
 
-(let ((start (time->seconds (current-time))))
-  (let loop ((x 1))
-	(let ((then (+ x start)))
-	  (thread-sleep! (seconds->time then))
-	  (print then)
-	  (loop (+ x 1)))))
+(let loop ((sleepy (time->seconds (current-time)))
+		   (now (current-seconds)))
+  (print now)
+  (thread-sleep! (seconds->time sleepy))
+  (loop (+ 1 sleepy) (+ 1 now)))

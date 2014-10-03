@@ -1369,19 +1369,19 @@ factor (uintmax_t t0, struct factors *factors)
 }
 
 void
-factor_time(uintmax_t t) {
+factor_time(uintmax_t t, unsigned long* facts, int len) {
   struct factors factors;
 
   printf("%lu:", t);
 
   factor((unsigned long)t, &factors);
 
-  for (unsigned int j = 0; j < factors.nfactors; j++)
-    for (unsigned int k = 0; k < factors.e[j]; k++)
-    {
-      printf(" %lu", factors.p[j]);
-    }
-  putchar ('\n');
+  facts[0] = factors.nfactors;
+  for (unsigned int j = 0; j < factors.nfactors && j < len; j++) {
+	  facts[j+1] = factors.p[j];
+	  printf(" %lu", factors.p[j]);
+  }
+  putchar('\n');
 }
 
 /* set tabstop=2 shiftwidth=2 expandtab */

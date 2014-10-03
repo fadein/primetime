@@ -3,6 +3,7 @@
 ;; DEBUGGING
 ;(set! current-seconds (lambda () 1412316039.0))
 ;(set! current-seconds (lambda () 1412360565.0))
+;(set! current-seconds (lambda () 1412360693.0))
 
 ;; make ready for the factor_time C function
 (define factor-time (foreign-lambda void "factor_time"
@@ -26,7 +27,8 @@
 			(make-list 5 '(bold fg-yellow))
 			(make-list 7 '(bold fg-green))
 			(make-list 11 '(bold fg-cyan))
-			(make-list 13 '(bold fg-blue))))))
+			(make-list 13 '(bold fg-blue))
+			(circular-list '(bold fg-black))))))
   (set! prime-colors
 	(append (make-list 2 '(bold fg-red)) colors))
   (set! twin-prime-colors

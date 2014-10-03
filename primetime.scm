@@ -1,5 +1,8 @@
 (use posix srfi-4 srfi-18)
 
+;; DEBUGGING
+;(set! current-seconds (lambda () 1412316039.0))
+
 (define factor-time (foreign-lambda void "factor_time"
 									unsigned-integer32
 									u32vector
@@ -18,7 +21,7 @@
 								 ((_ pp)
 								  (begin
 									(thread-sleep! (seconds->time (+ x start)))
-									(loop (+ 1 x) (+ 1 now) 0))))))
+									(loop (+ 1 x) (+ 1 now) pp))))))
 
 	  ; call the C function and put the list of factors into u32factors
 	  (factor-time now u32factors *MAX-SIZE*)

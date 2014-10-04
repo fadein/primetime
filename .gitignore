@@ -5,3 +5,5 @@ primo
 tags
 cscope.out
 simple
+*.import.scm
+*.so

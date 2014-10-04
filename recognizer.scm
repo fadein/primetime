@@ -20,24 +20,26 @@
 		  (circular-list -100 -100 -100 -100))
 
 		(define (recognizer lst)
-		  (cond
-			((list= eq? lst '(8 6 2 0))
-			 'quadruple)
+		  (let ((lst (take lst 4)))
+			(cond
+			  ((list= eq? lst '(8 6 2 0))
+			   'quadruple)
 
-			((or (list= eq? (drop lst 1) '(6 4 0))
-				 (list= eq? (drop lst 1) '(6 2 0)))
-			 'triplet)
+			  ((or (list= eq? (drop lst 1) '(6 4 0))
+				   (list= eq? (drop lst 1) '(6 2 0)))
+			   'triplet)
 
-			((list= eq? (drop lst 2) '(6 0))
-			 'sexy)
+			  ((list= eq? (drop lst 2) '(6 0))
+			   'sexy)
 
-			((list= eq? (drop lst 2) '(4 0))
-			 'cousin)
+			  ((list= eq? (drop lst 2) '(4 0))
+			   'cousin)
 
-			((list= eq? (drop lst 2) '(2 0))
-			 'twin)
+			  ((list= eq? (drop lst 2) '(2 0))
+			   'twin)
 
-			(else
-			  #f)))
+			  ((> (list-ref lst 2) 56)
+			   'combo-breaker)
 
-		)
+			  (else
+				#f)))))

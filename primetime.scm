@@ -9,7 +9,7 @@
 ;; DEBUGGING
 ;(set! current-seconds (lambda () 1412316039.0)) ;; TRIPLET
 ;(set! current-seconds (lambda () 1412360565.0)) ;; TWIN PRIMES
-;(set! current-seconds (lambda () 1412360693.0))
+;(set! current-seconds (lambda () 1412360693.0)) ;; immediate prime, then 60 gap
 
 ;; make ready for the factor_time C function
 (define factor-time (foreign-lambda void "factor_time"
@@ -79,14 +79,14 @@
 		  (begin
 			(advance-prime-count prime-counter)
 			;(print "\nrecognizing on " (take prime-counter 4)
-			;	   (recognizer (take prime-counter 4)))
+				   ;(recognizer prime-counter))
 
-			(case (recognizer (take prime-counter 4))
+			(case (recognizer prime-counter)
 			  ((quadruple)
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** PRIME ******* QUADRUPLET* ************* *****************")
+								": ** *** PRIME ******* QUADRUPLET! ************* *****************")
 				 0))
 
 			  ((triplet)
@@ -117,11 +117,18 @@
 								": ** *** *TWIN PRIMES* *********** ************* *****************")
 				 0))
 
+			  ((combo-breaker)
+				 (doloop
+				   prime-colors
+				   (string-append now-str
+								": ** CCC COMBO BREAKER *********** ************* *****************")
+				 0))
+
 			  (else
 				(doloop
 				  prime-colors
 				  (string-append now-str
-								 ": ** *** PRIME TIME!!! *********** ************* *****************")
+								 ": ** *** PRIME TIME*** *********** ************* *****************")
 				  0))))
 
 				(let ((factors (subu32vector u32factors 1 (+ 1 n))))

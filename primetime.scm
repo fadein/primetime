@@ -36,7 +36,13 @@
 
 ;; print startup banner
 (print* (set-text '(bold bg-red fg-white)
-				  "** *** ***** ******* It's PRIME TIME! *********** *************"))
+					"** *** ***** ******* *********** ************* *****************")
+		"\n"
+		(set-text '(bold bg-red fg-white)
+					"** *** ***** *******    IT'S PRIME TIME!       *****************")
+		"\n"
+		(set-text '(bold bg-red fg-white)
+					"## *** ***** ******* *********** ************* *****************"))
 
 (let ((start (time->seconds (current-time)))
 	  (now (current-seconds)))
@@ -62,14 +68,14 @@
 			   (doloop
 				 twin-prime-colors
 				 (string-append now-str
-								": ** *** ***** ******* TWIN PRIME!!! *********** *************")
+								": ** *** *TWIN PRIMES* *********** ************* *****************")
 				 0))
 
 			  (prime?
 				(doloop
 				  prime-colors
 				  (string-append now-str
-								 ": ** *** ***** ******* PRIME TIME! *********** *************")
+								 ": ** *** *TWIN PRIMES* *********** ************* *****************")
 				  0))
 
 			  (else

@@ -1,8 +1,14 @@
-(use data-structures srfi-4 srfi-13 srfi-18 ansi-escape-sequences)
+(use
+  data-structures
+  srfi-4
+  srfi-13
+  srfi-18
+  ansi-escape-sequences
+  recognizer)
 
 ;; DEBUGGING
-;(set! current-seconds (lambda () 1412316039.0))
-;(set! current-seconds (lambda () 1412360565.0))
+;(set! current-seconds (lambda () 1412316039.0)) ;; TRIPLET
+;(set! current-seconds (lambda () 1412360565.0)) ;; TWIN PRIMES
 ;(set! current-seconds (lambda () 1412360693.0))
 
 ;; make ready for the factor_time C function
@@ -18,7 +24,7 @@
 
 ;; Prepare the color cycle for output
 (define prime-colors #f)
-(define twin-prime-colors #f)
+(define special-colors #f)
 
 (let ((colors
 		(concatenate
@@ -31,7 +37,7 @@
 			(circular-list '(bold fg-black))))))
   (set! prime-colors
 	(append (make-list 2 '(bold fg-red)) colors))
-  (set! twin-prime-colors
+  (set! special-colors
 	(append (make-list 2 '(bold fg-magenta)) colors)))
 
 ;; print startup banner
@@ -45,13 +51,18 @@
 					"## *** ***** ******* *********** ************* *****************"))
 
 (let ((start (time->seconds (current-time)))
-	  (now (current-seconds)))
+	  (now (current-seconds))
+	  (prime-counter (make-prime-counter)))
   (let loop ((x 1) (now now) (prev-prime 1000) (c (cdr prime-colors)))
 
 	(let-syntax ((doloop
 				   (syntax-rules ()
 								 ((_ cc tt pp)
 								  (begin
+									;(print "\n\tthe prime list was " (take prime-counter 4))
+									(circle-incr prime-counter)
+									;(print "\n\tthe prime list is now " (take prime-counter 4))
+
 									(print* "\n" (set-text (car cc) tt))
 									(thread-sleep! (seconds->time (+ x start)))
 									(loop (+ 1 x) (+ 1 now) pp cc))))))
@@ -64,23 +75,57 @@
 			 (prime? (= 1 n))
 			 (now-str (substring (number->string now) 0 10)))
 
-		(cond ((and prime? (= prev-prime 1))
+		(if prime?
+		  (begin
+			(advance-prime-count prime-counter)
+			;(print "\nrecognizing on " (take prime-counter 4)
+			;	   (recognizer (take prime-counter 4)))
+
+			(case (recognizer (take prime-counter 4))
+			  ((quadruple)
 			   (doloop
-				 twin-prime-colors
+				 special-colors
+				 (string-append now-str
+								": ** *** PRIME ******* QUADRUPLET* ************* *****************")
+				 0))
+
+			  ((triplet)
+			   (doloop
+				 special-colors
+				 (string-append now-str
+								": ** *** PRIME TRIPLET *********** ************* *****************")
+				 0))
+
+			  ((sexy)
+			   (doloop
+				 special-colors
+				 (string-append now-str
+								": ** *** *SEXY PRIMES* *********** ************* *****************")
+				 0))
+
+			  ((cousin)
+			   (doloop
+				 special-colors
+				 (string-append now-str
+								": ** *** PRIME COUSINS *********** ************* *****************")
+				 0))
+
+			  ((twin)
+			   (doloop
+				 special-colors
 				 (string-append now-str
 								": ** *** *TWIN PRIMES* *********** ************* *****************")
 				 0))
 
-			  (prime?
+			  (else
 				(doloop
 				  prime-colors
 				  (string-append now-str
-								 ": ** *** *TWIN PRIMES* *********** ************* *****************")
-				  0))
+								 ": ** *** PRIME TIME!!! *********** ************* *****************")
+				  0))))
 
-			  (else
 				(let ((factors (subu32vector u32factors 1 (+ 1 n))))
 				  (doloop
 					(cdr c)
 					(string-append now-str ": " (string-join (map number->string (u32vector->list factors))))
-					(+ 1 prev-prime)))))))))
+					(+ 1 prev-prime))))))))

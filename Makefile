@@ -6,14 +6,13 @@ primo: primo.c factor.o
 
 factor.o: factor.c
 
-primetime: primetime.scm factor.o recognizer.so recognizer.import.scm
-	csc primetime.scm factor.o
+%.o: %.scm
+	csc -c $^
 
-recognizer.import.scm recognizer.so: recognizer.scm
-	csc -s $^ -J
+primetime: primetime.scm factor.o recognizer.o
+	csc $^
 
 clean:
 	rm -f *.import.scm *.so *.o rtest factor primetime
-
 
 .PHONY: all clean

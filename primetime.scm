@@ -3,8 +3,8 @@
   srfi-4
   srfi-13
   srfi-18
-  ansi-escape-sequences
-  recognizer)
+  ansi-escape-sequences)
+(declare (uses recognizer))
 
 ;; DEBUGGING
 ;(set! current-seconds (lambda () 1412316039.0)) ;; TRIPLET

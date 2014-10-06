@@ -1,0 +1,19 @@
+Idea blog:
+==========
+XXX	forward the telnet port so that a user gets connected to a primetime process
+	make primetime a TCP server that can accept connections and print the lines to each socket;
+		see the "tcp" unit - I think that's built-in to CHICKEN
+		smart would be to compute the factors once and forward that info to each listener
+	count prime freq and compare to Euler's Totient function - keep a running average of # of primes
+	log prime events - Primetimes, twins, gaps, etc.
+XXX	Twin primes
+XXX	Cousin primes (p, p+4)
+XXX	Sexy primes (p, p+6)
+XXX	prime triplets (p, p+2, p+6) (p, p+4, p+6)
+XXX	prime quadruplets (p, p+2, p+6, p+8)
+	Commemorate when 911, 31337 come up as a factor
+XXX	C C C Combo breaker!
+XXX	ensure clock is set to UTC, or that I'm getting the UTC Epoch time
+
+": ** *** PRIME ******* *********** CONSTELLATION *****************"
+": ** *** 31337 FACTOR! *********** ************* *****************"

@@ -28,6 +28,11 @@
 (define prime-colors #f)
 (define special-colors #f)
 
+;;; main code
+; we don't need no stinkin' input
+(close-input-port (current-input-port))
+
+; progression of line colors in ANSI escape codes (8 colors)
 (let ((colors
 		(concatenate
 		  (list
@@ -42,15 +47,19 @@
   (set! special-colors
 	(append (make-list 2 '(bold fg-magenta)) colors)))
 
-;; print startup banner
+; print startup banner
 (print* (set-text '(bold bg-red fg-white)
-					"** *** ***** ******* *********** ************* *****************\r")
-		"\n"
+					"## *** ***** ******* *********** ************* *****************")
+		"\r\n"
 		(set-text '(bold bg-red fg-white)
-					"** *** ***** *******    IT'S PRIME TIME!       *****************\r")
-		"\n"
+					"** *** ***** *******     IT'S PRIME TIME!      *****************")
+		"\r\n"
 		(set-text '(bold bg-red fg-white)
-					"## *** ***** ******* *********** ************* *****************\r"))
+					"** *** ***** *******  By Erik Falor (c) 2014   *****************")
+		"\r\n"
+		(set-text '(bold bg-red fg-white)
+					"## *** ***** ******* *********** ************* *****************")
+		"\r")
 
 (let ((start (time->seconds (current-time)))
 	  (now (current-seconds))

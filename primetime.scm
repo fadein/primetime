@@ -43,13 +43,13 @@
 
 ;; print startup banner
 (print* (set-text '(bold bg-red fg-white)
-					"** *** ***** ******* *********** ************* *****************")
+					"** *** ***** ******* *********** ************* *****************\r")
 		"\n"
 		(set-text '(bold bg-red fg-white)
-					"** *** ***** *******    IT'S PRIME TIME!       *****************")
+					"** *** ***** *******    IT'S PRIME TIME!       *****************\r")
 		"\n"
 		(set-text '(bold bg-red fg-white)
-					"## *** ***** ******* *********** ************* *****************"))
+					"## *** ***** ******* *********** ************* *****************\r"))
 
 (let ((start (time->seconds (current-time)))
 	  (now (current-seconds))
@@ -87,53 +87,53 @@
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** PRIME ******* QUADRUPLET! ************* *****************")
+								": ** *** PRIME ******* QUADRUPLET! ************* *****************\r")
 				 0))
 
 			  ((triplet)
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** PRIME TRIPLET *********** ************* *****************")
+								": ** *** PRIME TRIPLET *********** ************* *****************\r")
 				 0))
 
 			  ((sexy)
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** *SEXY PRIMES* *********** ************* *****************")
+								": ** *** *SEXY PRIMES* *********** ************* *****************\r")
 				 0))
 
 			  ((cousin)
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** PRIME COUSINS *********** ************* *****************")
+								": ** *** PRIME COUSINS *********** ************* *****************\r")
 				 0))
 
 			  ((twin)
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** *TWIN PRIMES* *********** ************* *****************")
+								": ** *** *TWIN PRIMES* *********** ************* *****************\r")
 				 0))
 
 			  ((combo-breaker)
 				 (doloop
 				   prime-colors
 				   (string-append now-str
-								": ** CCC COMBO BREAKER *********** ************* *****************")
+								": ** CCC COMBO BREAKER *********** ************* *****************\r")
 				 0))
 
 			  (else
 				(doloop
 				  prime-colors
 				  (string-append now-str
-								 ": ** *** PRIME TIME*** *********** ************* *****************")
+								 ": ** *** PRIME TIME*** *********** ************* *****************\r")
 				  0))))
 
 				(let ((factors (subu32vector u32factors 1 (+ 1 n))))
 				  (doloop
 					(cdr c)
-					(string-append now-str ": " (string-join (map number->string (u32vector->list factors))))
+					(string-append now-str ": " (string-join (map number->string (u32vector->list factors))) "\r")
 					(+ 1 prev-prime))))))))

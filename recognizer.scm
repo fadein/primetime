@@ -1,4 +1,3 @@
-;(declare (unit recognizer))
 (use srfi-1)
 
 ; this syntax isn't exported, nor seems to be imported into primetime

@@ -21,69 +21,6 @@
    In 2012, the core was rewritten by Torbjörn Granlund and Niels Möller.
    Contains code from GNU MP.  */
 
-/* Efficiently factor numbers that fit in one or two words (word = uintmax_t),
-   or, with GMP, numbers of any size.
-
-  Code organisation:
-
-    There are several variants of many functions, for handling one word, two
-    words, and GMP's mpz_t type.  If the one-word variant is called foo, the
-    two-word variant will be foo2, and the one for mpz_t will be mp_foo.  In
-    some cases, the plain function variants will handle both one-word and
-    two-word numbers, evidenced by function arguments.
-
-    The factoring code for two words will fall into the code for one word when
-    progress allows that.
-
-    Using GMP is optional.  Define HAVE_GMP to make this code include GMP
-    factoring code.  The GMP factoring code is based on GMP's demos/factorize.c
-    (last synched 2012-09-07).  The GMP-based factoring code will stay in GMP
-    factoring code even if numbers get small enough for using the two-word
-    code.
-
-  Algorithm:
-
-    (1) Perform trial division using a small primes table, but without hardware
-        division since the primes table store inverses modulo the word base.
-        (The GMP variant of this code doesn't make use of the precomputed
-        inverses, but instead relies on GMP for fast divisibility testing.)
-    (2) Check the nature of any non-factored part using Miller-Rabin for
-        detecting composites, and Lucas for detecting primes.
-    (3) Factor any remaining composite part using the Pollard-Brent rho
-        algorithm or the SQUFOF algorithm, checking status of found factors
-        again using Miller-Rabin and Lucas.
-
-    We prefer using Hensel norm in the divisions, not the more familiar
-    Euclidian norm, since the former leads to much faster code.  In the
-    Pollard-Brent rho code and the prime testing code, we use Montgomery's
-    trick of multiplying all n-residues by the word base, allowing cheap Hensel
-    reductions mod n.
-
-  Improvements:
-
-    * Use modular inverses also for exact division in the Lucas code, and
-      elsewhere.  A problem is to locate the inverses not from an index, but
-      from a prime.  We might instead compute the inverse on-the-fly.
-
-    * Tune trial division table size (not forgetting that this is a standalone
-      program where the table will be read from disk for each invocation).
-
-    * Implement less naive powm, using k-ary exponentiation for k = 3 or
-      perhaps k = 4.
-
-    * Try to speed trial division code for single uintmax_t numbers, i.e., the
-      code using DIVBLOCK.  It currently runs at 2 cycles per prime (Intel SBR,
-      IBR), 3 cycles per prime (AMD Stars) and 5 cycles per prime (AMD BD) when
-      using gcc 4.6 and 4.7.  Some software pipelining should help; 1, 2, and 4
-      respectively cycles ought to be possible.
-
-    * The redcify function could be vastly improved by using (plain Euclidian)
-      pre-inversion (such as GMP's invert_limb) and udiv_qrnnd_preinv (from
-      GMP's gmp-impl.h).  The redcify2 function could be vastly improved using
-      similar methoods.  These functions currently dominate run time when using
-      the -w option.
-*/
-
 //#include <config.h>
 #include <getopt.h>
 #include <stdio.h>
@@ -92,10 +29,7 @@
 #include <assert.h>
 #include <limits.h>
 
-//#include "system.h"
 #include <error.h>
-//#include "quote.h"
-//#include "xstrtol.h"
 
 typedef unsigned uintmax_t;
 typedef int intmax_t;
@@ -1368,6 +1302,7 @@ factor (uintmax_t t0, struct factors *factors)
     }
 }
 
+/* Factor a Unix timestamp, which is a 32-bit unsigned int */
 void
 factor_time(uintmax_t t, unsigned* facts, int len) {
   struct factors factors;

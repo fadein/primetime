@@ -1,6 +1,8 @@
-(declare (unit recognizer))
+;(declare (unit recognizer))
 (use srfi-1)
 
+; this syntax isn't exported, nor seems to be imported into primetime
+; something about units vs. syntax?
 (define-syntax advance-prime-count
   (syntax-rules ()
 				((_ lst)

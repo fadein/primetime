@@ -8,6 +8,7 @@
 (include "recognizer.scm")
 
 ;; DEBUGGING
+;(set! current-seconds (lambda () 99131.0)) ;; Quadruple
 ;(set! current-seconds (lambda () 1412316039.0)) ;; TRIPLET
 ;(set! current-seconds (lambda () 1412360565.0)) ;; TWIN PRIMES
 ;(set! current-seconds (lambda () 1412360693.0)) ;; immediate prime, then 60 gap
@@ -101,35 +102,35 @@
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** *SEXY PRIMES* *********** ************* *****************\r")
+								": ** *** *SEXY PRIME**\r")
 				 0))
 
 			  ((cousin)
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** PRIME COUSINS *********** ************* *****************\r")
+								": ** *** PRIME COUSIN* ***********\r")
 				 0))
 
 			  ((twin)
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** *TWIN PRIMES* *********** ************* *****************\r")
+								": ** *** *TWIN PRIME** *********** *************\r")
 				 0))
 
 			  ((combo-breaker)
 				 (doloop
 				   prime-colors
 				   (string-append now-str
-								": ** CCC COMBO BREAKER *********** ************* *****************\r")
+								": ** CCC COMBO BREAKER *PRIME*GAP=" (number->string (list-ref prime-counter 2)) "\r")
 				 0))
 
 			  (else
 				(doloop
 				  prime-colors
 				  (string-append now-str
-								 ": ** *** PRIME TIME*** *********** ************* *****************\r")
+								 ": ** *** PRIME TIME***\r")
 				  0))))
 
 				(let ((factors (subu32vector u32factors 1 (+ 1 n))))

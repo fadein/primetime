@@ -37,7 +37,8 @@
 	  ((list= eq? (drop lst 2) '(2 0))
 	   'twin)
 
-	  ((> (list-ref lst 2) 56)
+	  ; 59 is the 17th prime
+	  ((> (list-ref lst 2) 59)
 	   'combo-breaker)
 
 	  (else

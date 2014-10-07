@@ -1306,6 +1306,7 @@ factor (uintmax_t t0, struct factors *factors)
 void
 factor_time(uintmax_t t, unsigned* facts, int len) {
   struct factors factors;
+  unsigned int i = 0;
 
 #ifdef DEBUG
   printf("%u:", t);
@@ -1313,17 +1314,19 @@ factor_time(uintmax_t t, unsigned* facts, int len) {
 
   factor((unsigned long)t, &factors);
 
-  facts[0] = factors.nfactors;
   for (unsigned int j = 0; j < factors.nfactors && j < len; j++)
+    for (unsigned int k = 0; k < factors.e[j]; k++)
 #ifdef DEBUG
   {
 #endif
-	  facts[j+1] = factors.p[j];
+	  facts[++i] = factors.p[j];
 #ifdef DEBUG
 	  printf(" %u", factors.p[j]);
   }
   putchar('\n');
 #endif
+
+  facts[0] = i;
 }
 
 /* set tabstop=2 shiftwidth=2 expandtab */

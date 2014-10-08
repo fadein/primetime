@@ -47,19 +47,10 @@
   (set! special-colors
 	(append (make-list 2 '(bold fg-magenta)) colors)))
 
+
 ; print startup banner
-(print* (set-text '(bold bg-red fg-white)
-					"## *** ***** ******* *********** ************* *****************")
-		"\r\n"
-		(set-text '(bold bg-red fg-white)
-					"** *** ***** *******     IT'S PRIME TIME!      *****************")
-		"\r\n"
-		(set-text '(bold bg-red fg-white)
-					"** *** ***** *******  By Erik Falor (c) 2014   *****************")
-		"\r\n"
-		(set-text '(bold bg-red fg-white)
-					"** ### ***** ******* *********** ************* *****************")
-		"\r")
+(include "banner.scm")
+(banner)
 
 (let ((start (time->seconds (current-time)))
 	  (now (current-seconds))

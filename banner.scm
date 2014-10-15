@@ -18,5 +18,7 @@ BANNER
 
 (define (banner attrb)
     (string-join
-      (map (lambda (str attrb) (set-text256 attrb str #t)) bannerText attrb)
+      (map (lambda (str attrb)
+             (set-text '(reverse-video)
+                       (set-text256 attrb str))) bannerText attrb)
       "\r\n"))

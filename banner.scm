@@ -17,8 +17,6 @@ BANNER
 ))
 
 (define (banner attrb)
-  (string-chomp
     (string-join
-      (map (lambda (str attrb) (set-text256 attrb str #t))
-           bannerText attrb)
-      "\r\n") "\r\n"))
+      (map (lambda (str attrb) (set-text256 attrb str #t)) bannerText attrb)
+      "\r\n"))

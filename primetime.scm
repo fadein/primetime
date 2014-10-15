@@ -24,29 +24,11 @@
 ;; an array of unsigned ints to write prime factors into as a side-effect
 (define u32factors (make-u32vector *MAX-FACTORS*))
 
-;; Prepare the color cycle for output
-(define prime-colors #f)
-(define special-colors #f)
+(include "256colors.scm")
 
 ;;; main code
 ; we don't need no stinkin' input
 (close-input-port (current-input-port))
-
-; progression of line colors in ANSI escape codes (8 colors)
-(let ((colors
-		(concatenate
-		  (list
-			(make-list 3 '(bold fg-white))
-			(make-list 5 '(bold fg-yellow))
-			(make-list 7 '(bold fg-green))
-			(make-list 11 '(bold fg-cyan))
-			(make-list 13 '(bold fg-blue))
-			(circular-list '(bold fg-black))))))
-  (set! prime-colors
-	(append (make-list 2 '(bold fg-red)) colors))
-  (set! special-colors
-	(append (make-list 2 '(bold fg-magenta)) colors)))
-
 
 ; print startup banner
 (include "banner.scm")
@@ -65,7 +47,7 @@
 									(circle-incr prime-counter)
 									;(print "\n\tthe prime list is now " (take prime-counter 4))
 
-									(print* "\n" (set-text (car cc) tt))
+									(print* "\n" (set-text256 (car cc) tt))
 									(thread-sleep! (seconds->time (+ x start)))
 									(loop (+ 1 x) (+ 1 now) pp cc))))))
 

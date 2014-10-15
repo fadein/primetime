@@ -2,7 +2,7 @@ DEST = /usr/local/bin
 CFLAGS = --std=c99
 CSC_OPTIONS = -O5 -deploy
 
-all: primetime
+all: primetime/primetime
 
 factor.o: factor.c
 

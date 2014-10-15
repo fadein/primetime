@@ -1,7 +1,8 @@
 ; vim:set tw=64 expandtab:
 
-(use
-  ansi-escape-sequences)
+;; Print a colorful banner
+
+(use ansi-escape-sequences srfi-13)
 
 (define bannerText
   (string-split
@@ -10,12 +11,14 @@
 ** *** ***** ******* *  IT'S PRIME TIME!  **** *****************
 ** *** ***** ******* *   By Erik Falor    **** *****************
 ** *** ***** ******* * Copyright (C) 2014 **** *****************
-## *** ***** ******* *********** ************* *****************
+** ### ***** ******* *********** ************* *****************
 BANNER
-"\n"
+    "\n"
 ))
 
-(define (banner)
-  (apply print
-         (map (lambda (s) (set-text '(bold bg-red fg-white) (conc s "\r\n")))
-              bannerText)))
+(define (banner attrb)
+  (string-chomp
+    (string-join
+      (map (lambda (str attrb) (set-text256 attrb str #t))
+           bannerText attrb)
+      "\r\n") "\r\n"))

@@ -24,20 +24,19 @@
 ;; an array of unsigned ints to write prime factors into as a side-effect
 (define u32factors (make-u32vector *MAX-FACTORS*))
 
-(include "256colors.scm")
-
 ;;; main code
 ; we don't need no stinkin' input
 (close-input-port (current-input-port))
 
 ; print startup banner
+(include "256colors.scm")
 (include "banner.scm")
-(banner)
+(print* (banner (drop special-colors 5)))
 
 (let ((start (time->seconds (current-time)))
 	  (now (current-seconds))
 	  (prime-counter (make-prime-counter)))
-  (let loop ((x 1) (now now) (prev-prime 1000) (c (cdr prime-colors)))
+  (let loop ((x 1) (now now) (prev-prime 1000) (c (drop special-colors 9)))
 
 	(let-syntax ((doloop
 				   (syntax-rules ()

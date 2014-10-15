@@ -28,8 +28,9 @@
 ; we don't need no stinkin' input
 (close-input-port (current-input-port))
 
-; print startup banner
+; Set up fancy colors and print the title banner
 (include "256colors.scm")
+(print* (hide-cursor) (set-title "IT'S PRIME TIME!!!") (erase-display) (cursor-position))
 (include "banner.scm")
 (print* (banner (drop special-colors 5)))
 

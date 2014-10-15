@@ -24,38 +24,20 @@
 ;; an array of unsigned ints to write prime factors into as a side-effect
 (define u32factors (make-u32vector *MAX-FACTORS*))
 
-;; Prepare the color cycle for output
-(define prime-colors #f)
-(define special-colors #f)
-
 ;;; main code
 ; we don't need no stinkin' input
 (close-input-port (current-input-port))
 
-; progression of line colors in ANSI escape codes (8 colors)
-(let ((colors
-		(concatenate
-		  (list
-			(make-list 3 '(bold fg-white))
-			(make-list 5 '(bold fg-yellow))
-			(make-list 7 '(bold fg-green))
-			(make-list 11 '(bold fg-cyan))
-			(make-list 13 '(bold fg-blue))
-			(circular-list '(bold fg-black))))))
-  (set! prime-colors
-	(append (make-list 2 '(bold fg-red)) colors))
-  (set! special-colors
-	(append (make-list 2 '(bold fg-magenta)) colors)))
-
-
-; print startup banner
+; Set up fancy colors and print the title banner
+(include "256colors.scm")
+(print* (hide-cursor) (set-title "IT'S PRIME TIME!!!") (erase-display) (cursor-position))
 (include "banner.scm")
-(banner)
+(print* (banner (drop special-colors 5)))
 
 (let ((start (time->seconds (current-time)))
 	  (now (current-seconds))
 	  (prime-counter (make-prime-counter)))
-  (let loop ((x 1) (now now) (prev-prime 1000) (c (cdr prime-colors)))
+  (let loop ((x 1) (now now) (prev-prime 1000) (c (drop special-colors 9)))
 
 	(let-syntax ((doloop
 				   (syntax-rules ()
@@ -65,7 +47,7 @@
 									(circle-incr prime-counter)
 									;(print "\n\tthe prime list is now " (take prime-counter 4))
 
-									(print* "\n" (set-text (car cc) tt))
+									(print* "\n" (set-text256 (car cc) tt))
 									(thread-sleep! (seconds->time (+ x start)))
 									(loop (+ 1 x) (+ 1 now) pp cc))))))
 

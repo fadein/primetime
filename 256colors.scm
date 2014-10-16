@@ -29,13 +29,12 @@
 	(50  (#x00 #xff #x00))  ;green
 	(60  (#x00 #xff #xff))  ;cyan
 	(70  (#x00 #x00 #xff))  ;blue
-	(80  (#xb0 #xb0 #xb0))  ;blue-grey
-	(90  (#x50 #x50 #x50))  ;pale grey
-	(100 (#x30 #x30 #x30))));dim grey
+	(90  (#xb0 #xb0 #xb0))  ;pale grey
+	(101 (#x50 #x50 #x50))));dim grey
 
 ; re-define some of the colors in the terminal's 6x6x6 color cube
 (do ((i 20 (add1 i)))
-  ((= i 101))
+  ((= i 102))
   (let ((color (keyframe i keyframes)))
 	(print* (set-color256! i
 						   (first  color)
@@ -46,7 +45,7 @@
 (define special-colors 
   ; form a list of the extended 256 color codes
   (let loop ((i 20))
-	(if (= i 100)
+	(if (= i 101)
 	  (circular-list `(bold (foreground ,i)))
 	  (cons `(bold (foreground ,i)) (loop (add1 i))))))
 

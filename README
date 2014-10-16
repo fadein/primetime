@@ -24,6 +24,7 @@ XXX	ensure clock is set to UTC, or that I'm getting the UTC Epoch time
 	mintty
 	GNOME Terminal 2.31.3
 	ROXTerm
+	Terminator
 
 256-Capable, but OSC incapable:
 ===============================
@@ -32,7 +33,8 @@ XXX	ensure clock is set to UTC, or that I'm getting the UTC Epoch time
 
 Just fugly:
 ===========
-	cmd.exe
+	cmd.exe / PowerShell
+	OSX Terminal
 
 Unknown:
 ========

@@ -41,6 +41,16 @@
 
 	(let-syntax ((doloop
 				   (syntax-rules ()
+								 ((_ cc tt)
+								  (begin
+									;(print "\n\tthe prime list was " (take prime-counter 4))
+									(circle-incr prime-counter)
+									;(print "\n\tthe prime list is now " (take prime-counter 4))
+
+									(print* "\n" (set-text256 (car cc) tt))
+									(thread-sleep! (seconds->time (+ x start)))
+									(loop (+ 1 x) (+ 1 now) 0 cc)))
+
 								 ((_ cc tt pp)
 								  (begin
 									;(print "\n\tthe prime list was " (take prime-counter 4))
@@ -70,8 +80,7 @@
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** PRIME ******* QUADRUPLET! ************* *****************\r")
-				 0))
+								": ** *** PRIME ******* QUADRUPLET! ************* *****************\r")))
 
 			  ((triplet)
 			   (doloop
@@ -84,36 +93,31 @@
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** *SEXY PRIME**\r")
-				 0))
+								": ** *** *SEXY PRIME**\r")))
 
 			  ((cousin)
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** PRIME COUSIN* ***********\r")
-				 0))
+								": ** *** PRIME COUSIN* ***********\r")))
 
 			  ((twin)
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** *TWIN PRIME** *********** *************\r")
-				 0))
+								": ** *** *TWIN PRIME** *********** *************\r")))
 
 			  ((combo-breaker)
 				 (doloop
 				   prime-colors
 				   (string-append now-str
-								": ** CCC COMBO BREAKER *PRIME*GAP=" (number->string (list-ref prime-counter 2)) "\r")
-				 0))
+								": ** CCC COMBO BREAKER *PRIME*GAP=" (number->string (list-ref prime-counter 2)) "\r")))
 
 			  (else
 				(doloop
 				  prime-colors
 				  (string-append now-str
-								 ": ** *** PRIME TIME***\r")
-				  0))))
+								 ": ** *** PRIME TIME***\r")))))
 
 				(let ((factors (subu32vector u32factors 1 (+ 1 n))))
 				  (doloop

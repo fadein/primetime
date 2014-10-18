@@ -116,7 +116,8 @@
 				 (doloop
 				   prime-colors
 				   (string-append now-str
-								": ** CCC COMBO BREAKER *PRIME*GAP=" (number->string (list-ref prime-counter 2)) "\r")))
+								": ** CCC COMBO BREAKER *PRIME*GAP="
+								(number->string (- (list-ref prime-counter 2) 1)) "\r")))
 
 			  (else
 				(doloop

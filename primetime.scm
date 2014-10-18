@@ -86,8 +86,13 @@
 			   (doloop
 				 special-colors
 				 (string-append now-str
-								": ** *** PRIME TRIPLET *********** ************* *****************\r")
-				 0))
+								": ** *** PRIME TRIPLET *********** ************* *****************\r")))
+
+			  ((octomus)
+			   (doloop
+				 special-colors
+				 (string-append now-str
+								": ** *** ***** OCTOMUS ***PRIME***\r")))
 
 			  ((sexy)
 			   (doloop

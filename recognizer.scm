@@ -28,6 +28,9 @@
 		   (list= eq? (drop lst 1) '(6 2 0)))
 	   'triplet)
 
+	  ((list= eq? (drop lst 2) '(8 0))
+	   'octomus)
+
 	  ((list= eq? (drop lst 2) '(6 0))
 	   'sexy)
 

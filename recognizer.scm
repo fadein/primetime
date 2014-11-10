@@ -40,7 +40,8 @@
 	  ((list= eq? (drop lst 2) '(2 0))
 	   'twin)
 
-	  ; 59 is the 17th prime
+	  ; 59 is the 17th prime - this also marks a full
+	  ; minute without a prime number occurring
 	  ((> (list-ref lst 2) 59)
 	   'combo-breaker)
 

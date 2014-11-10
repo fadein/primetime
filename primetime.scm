@@ -12,6 +12,7 @@
 ;(set! current-seconds (lambda () 1412316039.0)) ;; TRIPLET
 ;(set! current-seconds (lambda () 1412360565.0)) ;; TWIN PRIMES
 ;(set! current-seconds (lambda () 1412360693.0)) ;; immediate prime, then 60 gap
+;(set! current-seconds (lambda () 1415577600.0)) ;; Error: (subu32vector) out of range
 
 ;; make ready for the factor_time C function
 (define factor-time (foreign-lambda void "factor_time"
@@ -19,7 +20,7 @@
 									u32vector
 									integer))
 
-(define *MAX-FACTORS* 26)
+(define *MAX-FACTORS* 32)
 
 ;; an array of unsigned ints to write prime factors into as a side-effect
 (define u32factors (make-u32vector *MAX-FACTORS*))

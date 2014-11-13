@@ -23,7 +23,15 @@
 (define *MAX-FACTORS* 32)
 
 ;; an array of unsigned ints to write prime factors into as a side-effect
-(define u32factors (make-u32vector *MAX-FACTORS*))
+(define u32factors (make-u32vector *MAX-FACTORS* 0))
+
+;; either use the current epoch time or the command-line argument
+(define (what-time?)
+  (if (and (not (null? (command-line-arguments)))
+		   (> (string-length (car (command-line-arguments))) 9)
+		   (string->number (car (command-line-arguments))))
+	(string->number (car (command-line-arguments)))
+	(current-seconds)))
 
 ;;; main code
 ; we don't need no stinkin' input
@@ -36,7 +44,7 @@
 (print* (banner (drop special-colors 5)))
 
 (let ((start (time->seconds (current-time)))
-	  (now (current-seconds))
+	  (now (what-time?))
 	  (prime-counter (make-prime-counter)))
   (let loop ((x 1) (now now) (prev-prime 1000) (c (drop special-colors 9)))
 

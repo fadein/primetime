@@ -14,6 +14,15 @@
 ;(set! current-seconds (lambda () 1412360693.0)) ;; immediate prime, then 60 gap
 ;(set! current-seconds (lambda () 1415577600.0)) ;; Error: (subu32vector) out of range
 
+;; Action to take upon process exit - show the cursor and reset the terminal's color
+(define (cleanup signal)
+  (print (show-cursor) (set-text '(fg-white) ""))
+  (exit))
+(set-signal-handler! signal/term  cleanup)
+(set-signal-handler! signal/int   cleanup)
+(set-signal-handler! signal/pipe  cleanup)
+(set-signal-handler! signal/quit  cleanup)
+
 ;; make ready for the factor_time C function
 (define factor-time (foreign-lambda void "factor_time"
 									unsigned-integer32

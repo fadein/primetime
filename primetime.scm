@@ -1,9 +1,10 @@
 (use
+  ansi-escape-sequences
   data-structures
-  srfi-4
+  posix
   srfi-13
   srfi-18
-  ansi-escape-sequences)
+  srfi-4)
 
 (include "recognizer.scm")
 
@@ -65,7 +66,7 @@
 									(circle-incr prime-counter)
 									;(print "\n\tthe prime list is now " (take prime-counter 4))
 
-									(print* "\n" (set-text256 (car cc) tt))
+									(print* "\n" (set-text256 (car cc) tt ))
 									(thread-sleep! (seconds->time (+ x start)))
 									(loop (+ 1 x) (+ 1 now) 0 cc)))
 
@@ -75,7 +76,7 @@
 									(circle-incr prime-counter)
 									;(print "\n\tthe prime list is now " (take prime-counter 4))
 
-									(print* "\n" (set-text256 (car cc) tt))
+									(print* "\n" (set-text256 (car cc) tt ))
 									(thread-sleep! (seconds->time (+ x start)))
 									(loop (+ 1 x) (+ 1 now) pp cc))))))
 

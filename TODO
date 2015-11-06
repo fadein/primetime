@@ -2,10 +2,12 @@ Idea blog:
 ==========
 	make primetime a TCP server that can accept connections and print the lines to each socket;
 		see the "tcp" unit - I think that's built-in to CHICKEN
-		smart would be to compute the factors once and forward that info to each listener
+		it would be smart to compute the factors once and forward that info to each listener
 	count prime freq and compare to Euler's Totient function - keep a running average of # of primes
 	log prime events - Primetimes, twins, gaps, etc.
-	Commemorate when 911, 31337 come up as a factor
+	Commemorate the moment when interesting numbers such as 911, 31337, etc. appear as a factor
+        ** *** PRIME ******* *********** CONSTELLATION *****************"
+        ** *** 31337 FACTOR! *********** ************* *****************"
 XXX	256 colors - taste the rainbow
 XXX	forward the telnet port so that a user gets connected to a primetime process
 XXX	Twin primes
@@ -16,7 +18,8 @@ XXX	prime quadruplets (p, p+2, p+6, p+8)
 XXX	C C C Combo breaker!
 XXX	ensure clock is set to UTC, or that I'm getting the UTC Epoch time
 
-https://www.youtube.com/playlist?list=PL0D0BD149128BB06F
+Prime Numbers by Numberphile
+	https://www.youtube.com/playlist?list=PL0D0BD149128BB06F
 
 256-Friendly Terminals:
 =======================
@@ -45,8 +48,6 @@ Unknown:
 	aterm
 	eterm
 
-": ** *** PRIME ******* *********** CONSTELLATION *****************"
-": ** *** 31337 FACTOR! *********** ************* *****************"
 
 Telnet negotiaion info:
 	http://en.wikipedia.org/wiki/Telnet#Related_RFCs
@@ -54,4 +55,4 @@ Telnet negotiaion info:
 
 JavaScript prime numbers:
 	https://www.hscripts.com/scripts/JavaScript/primefactor.php
-	http://www.javascripter.net/math/primes/factorization.htm
+	https://github.com/fadein/cryptoquotehttp://www.javascripter.net/math/primes/factorization.htm

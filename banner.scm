@@ -10,7 +10,8 @@
 ## *** ***** ******* *********** ************* *****************
 ** *** ***** ******* *  IT'S PRIME TIME!  **** *****************
 ** *** ***** ******* *   By Erik Falor    **** *****************
-** *** ***** ******* * Copyright (C) 2014 **** *****************
+** *** *****  https://github.com/fadein/primetime **************
+** *** ***** ******* * Copyright (C) 2015 **** *****************
 ** *** ***** ####### *********** ************* *****************
 BANNER
     "\n"
@@ -20,5 +21,5 @@ BANNER
     (string-join
       (map (lambda (str attrb)
              (set-text '(reverse-video)
-                       (set-text256 attrb str))) bannerText attrb)
+                       (set-text256 attrb str #f))) bannerText attrb)
       "\r\n"))

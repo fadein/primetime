@@ -56,7 +56,10 @@
 (let ((start (time->seconds (current-time)))
 	  (now (what-time?))
 	  (prime-counter (make-prime-counter)))
-  (let loop ((x 1) (now now) (prev-prime 1000) (c (drop special-colors 9)))
+  (let loop ((x 1)
+			 (now now)
+			 (prev-prime 1000)
+			 (c (drop special-colors (car (last keyframes)))))
 
 	(let-syntax ((doloop
 				   (syntax-rules ()

@@ -1,5 +1,8 @@
 Prime Time
-A prime number clock by Erik Falor
+
+A colorful prime number clock for your terminal
+
+by Erik Falor
 
 telnet://unnovative.net
 

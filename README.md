@@ -18,8 +18,8 @@ this moment, right now, is prime time!
 If the second second from right now is also a prime number, that will be twin
 prime time (a real cause for celebration). Prime cousins, sexy primes and other
 rare combos are highlighted for your enjoyment. But enjoy these quickly, as now
-doesn't stay prime time for long! How long will it take before you get to
-experience a triple prime?
+won't stay prime for long! How long will it take before you can experience a
+triple prime?
 
 Some times are just teeming with primes. At other times primes are few and far
 between. With Primetime you can always know which time is the right time.
@@ -31,6 +31,7 @@ between. With Primetime you can always know which time is the right time.
 
 ### ...or just build it!
 * Requires the ansi-escape-sequences egg
+
   ```
   chicken-install -s ansi-escape-sequences
   make

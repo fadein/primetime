@@ -8,8 +8,9 @@ factor.o: factor.c
 
 primetime/primetime: primetime.scm factor.o recognizer.scm banner.scm 256colors.scm
 	csc $(CSC_OPTIONS) primetime.scm factor.o
-	@echo Be sure to chicken-install -deploy ansi-escape-sequences into
-	@echo the deploy directory!
+	@echo Be sure to run
+	@echo chicken-install -deploy ansi-escape-sequences -prefix primetime
+	@echo to install ansi-escape-sequences into the self-contained application bundle!
 
 clean:
 	rm -rf *.o primetime

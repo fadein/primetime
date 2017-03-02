@@ -1,3 +1,4 @@
+(import foreign)
 (use
   ansi-escape-sequences
   data-structures
@@ -14,6 +15,9 @@
 ;(set! current-seconds (lambda () 1412360565.0)) ;; TWIN PRIMES
 ;(set! current-seconds (lambda () 1412360693.0)) ;; immediate prime, then 60 gap
 ;(set! current-seconds (lambda () 1415577600.0)) ;; Error: (subu32vector) out of range
+
+(define nice (foreign-lambda int "nice" int))
+(nice 11)
 
 ;; Action to take upon process exit - show the cursor and reset the terminal's color
 (define (cleanup signal)

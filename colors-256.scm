@@ -1,3 +1,12 @@
+(declare (unit colors-256))
+(module colors-256
+        (keyframe
+        keyframes
+        special-colors
+        prime-colors)
+
+        (import chicken scheme srfi-1)
+
 (use ansi-escape-sequences extras)
 
 (define (keyframe i frames)
@@ -51,3 +60,4 @@
 
 (define prime-colors (drop special-colors 10))
 
+); module

@@ -1,4 +1,12 @@
-(import foreign)
+(declare (uses recognizer
+               colors-256
+               banner))
+
+(import recognizer
+        colors-256
+        banner
+        foreign)
+
 (use
   ansi-escape-sequences
   data-structures
@@ -7,7 +15,6 @@
   srfi-18
   srfi-4)
 
-(include "recognizer.scm")
 
 ;; DEBUGGING
 ;(set! current-seconds (lambda () 99131.0)) ;; Quadruple
@@ -52,9 +59,7 @@
 (close-input-port (current-input-port))
 
 ; Set up fancy colors and print the title banner
-(include "256colors.scm")
 (print* (hide-cursor) (set-title "IT'S PRIME TIME!!!") (erase-display) (cursor-position))
-(include "banner.scm")
 (print* (banner (drop special-colors 5)))
 
 (let ((start (time->seconds (current-time)))

@@ -1,19 +1,29 @@
 DEST = /usr/local/bin
 CFLAGS = --std=c99
-CSC_OPTIONS = -O5 -deploy
+CSC_OPTIONS =
+CSC = /usr/bin/csc
 
-all: primetime/primetime
+OBJS = factor.o recognizer.o banner.o colors-256.o
+
+
+all: primetime
 
 factor.o: factor.c
 
-primetime/primetime: primetime.scm factor.o recognizer.scm banner.scm 256colors.scm
-	csc $(CSC_OPTIONS) primetime.scm factor.o
+%.o: %.scm
+	$(CSC) $(CSC_OPTIONS) $^ -c -j $(basename $@)
+
+primetime.o: primetime.scm $(OBJS)
+	$(CSC) $(CSC_OPTIONS) $< -c
+
+primetime: primetime.o $(OBJS)
+	$(CSC) $(CSC_OPTIONS) -o $@ $^
 	@echo Be sure to run
 	@echo chicken-install -deploy ansi-escape-sequences -prefix primetime
 	@echo to install ansi-escape-sequences into the self-contained application bundle!
 
 clean:
-	rm -rf *.o primetime
+	rm -rf *.o *.import.scm primetime
 
 install: primetime
 	sudo mv primetime $(DEST)

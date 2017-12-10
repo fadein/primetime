@@ -1,4 +1,12 @@
-(use srfi-1)
+(declare (unit recognizer))
+
+(module recognizer
+        (advance-prime-count
+          circle-incr 
+          make-prime-counter
+          recognizer )
+
+(import scheme chicken srfi-1)
 
 ; this syntax isn't exported, nor seems to be imported into primetime
 ; something about units vs. syntax?
@@ -47,3 +55,5 @@
 
 	  (else
 		#f))))
+
+); module

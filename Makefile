@@ -6,7 +6,7 @@ CSC = /usr/bin/csc
 
 OBJS = factor.o recognizer.o banner.o colors-256.o
 
-all: primetime/primetime
+all: primetime
 
 factor.o: factor.c
 
@@ -21,6 +21,9 @@ primetime/primetime: $(OBJS) primetime.o
 	@echo
 	@echo "Be sure to run 'make deploy'"
 	@echo to install ansi-escape-sequences into the self-contained application bundle!
+
+primetime: $(OBJS) primetime.o
+	$(CSC) $(CSC_OPTIONS) $^
 
 deploy: primetime/primetime
 	chicken-install -deploy ansi-escape-sequences -prefix primetime

@@ -18,9 +18,6 @@ primetime.o: primetime.scm $(OBJS)
 
 primetime/primetime: $(OBJS) primetime.o
 	$(CSC) $(CSC_OPTIONS) $(CSC_DEPLOY) $^
-	@echo
-	@echo "Be sure to run 'make deploy'"
-	@echo to install ansi-escape-sequences into the self-contained application bundle!
 
 primetime: $(OBJS) primetime.o
 	$(CSC) $(CSC_OPTIONS) $^

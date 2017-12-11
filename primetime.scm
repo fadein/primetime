@@ -36,6 +36,7 @@
 (set-signal-handler! signal/quit  cleanup)
 
 ;; make ready for the factor_time C function
+(foreign-declare "void factor_time(uintmax_t t, unsigned* facts, int len);")
 (define factor-time (foreign-lambda void "factor_time"
 									unsigned-integer32
 									u32vector

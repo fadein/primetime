@@ -2,18 +2,19 @@
                colors-256
                banner))
 
-(import recognizer
-        colors-256
-        banner
-        foreign)
-
-(use
+(import
+  recognizer
+  colors-256
+  banner
+  (chicken foreign)
+  (chicken process signal)
+  (chicken process-context)
+  (chicken time)
   ansi-escape-sequences
-  data-structures
-  posix
   srfi-13
   srfi-18
-  srfi-4)
+  srfi-4
+  srfi-1)
 
 
 ;; DEBUGGING

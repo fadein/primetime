@@ -1,9 +1,9 @@
 *.o
 factor
 primetime
-primo
 tags
 cscope.out
 simple
 *.import.scm
 *.so
+*.link

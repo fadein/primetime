@@ -1,10 +1,10 @@
-## It's Prime Time!
+# It's Prime Time!
 
 A colorful prime number clock for your terminal
 
 by Erik Falor @fadein
 
-### What is a prime number clock?
+## What is a prime number clock?
 
 This is a clock which lets you experience time in a whole new way. Disconnect
 from the regular rigidity of minutes and hours and feel the rhythm of pure
@@ -25,19 +25,25 @@ Some times are just teeming with primes. At other times primes are few and far
 between. With Primetime you can always know which time is the right time.
 
 
-### See for yourself
+## See for yourself
 `telnet unnovative.net`
 
 
-### ...or just build it!
-* Requires the ansi-escape-sequences egg
+## ...or just build it!
+Requires the following eggs to be installed by `chicken-install(1)`:
+
+* ansi-escape-sequences
+* srfi-1
+* srfi-13
+* srfi-14
+* srfi-18
 
   ```
-  chicken-install -s ansi-escape-sequences
+  chicken-install -s ansi-escape-sequences srfi-18
   make
   ```
 
-### Written in CHICKEN Scheme
+## Written in CHICKEN Scheme v5
 http://call-cc.org
 
 

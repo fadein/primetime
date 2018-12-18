@@ -1,12 +1,16 @@
 ; vim:set tw=64 expandtab:
 
-;; Print a colorful banner
 (declare (unit banner))
+
+;; Print a colorful banner
 (module banner
         (banner)
-        (import chicken scheme data-structures)
 
-(use ansi-escape-sequences srfi-13)
+(import
+  ansi-escape-sequences
+  (chicken string)
+  scheme
+  srfi-13)
 
 (define bannerText
   (string-split
@@ -15,8 +19,8 @@
 ** *** ***** ******* *  IT'S PRIME TIME!  **** *****************
 ** *** ***** ******* *   By Erik Falor    **** *****************
 ** *** *****  https://github.com/fadein/primetime **************
-** *** ***** ******* * Copyright (c) 2017 **** *****************
-** *** ***** ******* *********** ############# *****************
+** *** ***** ******* * Copyright (c) 2018 **** *****************
+** *** ***** ******* *********** ************* #################
 BANNER
     "\n"
 ))

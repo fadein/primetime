@@ -1,3 +1,5 @@
+; vim: set expandtab:
+
 (declare (uses recognizer
                colors-256
                banner))
@@ -36,9 +38,9 @@
 ;; make ready for the factor_time C function
 (foreign-declare "void factor_time(unsigned, unsigned* facts, int len);")
 (define factor-time (foreign-lambda void "factor_time"
-									unsigned-integer32
-									u32vector
-									integer))
+                                    unsigned-integer32
+                                    u32vector
+                                    integer))
 
 (define *MAX-FACTORS* 32)
 
@@ -48,10 +50,11 @@
 ;; either use the current epoch time or the command-line argument
 (define (what-time?)
   (if (and (not (null? (command-line-arguments)))
-		   (> (string-length (car (command-line-arguments))) 9)
-		   (string->number (car (command-line-arguments))))
-	(string->number (car (command-line-arguments)))
-	(current-seconds)))
+           (> (string-length (car (command-line-arguments))) 9)
+           (string->number (car (command-line-arguments))))
+      (string->number (car (command-line-arguments)))
+      (current-seconds)))
+
 
 ;;; main code
 ; we don't need no stinkin' input
@@ -62,101 +65,101 @@
 (print* (banner (drop special-colors 5)))
 
 (let ((start (time->seconds (current-time)))
-	  (now (what-time?))
-	  (prime-counter (make-prime-counter)))
+      (now (what-time?))
+      (prime-counter (make-prime-counter)))
   (let loop ((x 1)
-			 (now now)
-			 (prev-prime 1000)
-			 (c (drop special-colors (car (last keyframes)))))
+             (now now)
+             (prev-prime 1000)
+             (c (drop special-colors (car (last keyframes)))))
 
-	(let-syntax ((doloop
-				   (syntax-rules ()
-								 ((_ cc tt)
-								  (begin
-									;(print "\n\tthe prime list was " (take prime-counter 4))
-									(circle-incr prime-counter)
-									;(print "\n\tthe prime list is now " (take prime-counter 4))
+    (let-syntax ((doloop
+                   (syntax-rules ()
+                                 ((_ cc tt)
+                                  (begin
+                                    ;(print "\n\tthe prime list was " (take prime-counter 4))
+                                    (circle-incr prime-counter)
+                                    ;(print "\n\tthe prime list is now " (take prime-counter 4))
 
-									(print* "\n" (set-text256 (car cc) tt ))
-									(thread-sleep! (seconds->time (+ x start)))
-									(loop (+ 1 x) (+ 1 now) 0 cc)))
+                                    (print* "\n" (set-text256 (car cc) tt ))
+                                    (thread-sleep! (seconds->time (+ x start)))
+                                    (loop (+ 1 x) (+ 1 now) 0 cc)))
 
-								 ((_ cc tt pp)
-								  (begin
-									;(print "\n\tthe prime list was " (take prime-counter 4))
-									(circle-incr prime-counter)
-									;(print "\n\tthe prime list is now " (take prime-counter 4))
+                                 ((_ cc tt pp)
+                                  (begin
+                                    ;(print "\n\tthe prime list was " (take prime-counter 4))
+                                    (circle-incr prime-counter)
+                                    ;(print "\n\tthe prime list is now " (take prime-counter 4))
 
-									(print* "\n" (set-text256 (car cc) tt ))
-									(thread-sleep! (seconds->time (+ x start)))
-									(loop (+ 1 x) (+ 1 now) pp cc))))))
+                                    (print* "\n" (set-text256 (car cc) tt ))
+                                    (thread-sleep! (seconds->time (+ x start)))
+                                    (loop (+ 1 x) (+ 1 now) pp cc))))))
 
-	  ; call the C function and put the list of factors into u32factors
-	  (factor-time now u32factors *MAX-FACTORS*)
+      ; call the C function and put the list of factors into u32factors
+      (factor-time now u32factors *MAX-FACTORS*)
 
-	  ; the 1st element of u32factors is the count of prime factors
-	  (let* ((n (u32vector-ref u32factors 0))
-			 (prime? (= 1 n))
-			 (now-str (substring (number->string now) 0 10)))
+      ; the 1st element of u32factors is the count of prime factors
+      (let* ((n (u32vector-ref u32factors 0))
+             (prime? (= 1 n))
+             (now-str (substring (number->string now) 0 10)))
 
-		(if prime?
-		  (begin
-			(advance-prime-count prime-counter)
-			;(print "\nrecognizing on " (take prime-counter 4)
-				   ;(recognizer prime-counter))
+        (if prime?
+          (begin
+            (advance-prime-count prime-counter)
+            ;(print "\nrecognizing on " (take prime-counter 4)
+                   ;(recognizer prime-counter))
 
-			(case (recognizer prime-counter)
-			  ((quadruple)
-			   (doloop
-				 special-colors
-				 (string-append now-str
-								": ** *** PRIME ******* QUADRUPLET! ************* *****************\r")))
+            (case (recognizer prime-counter)
+              ((quadruple)
+               (doloop
+                 special-colors
+                 (string-append now-str
+                                ": ** *** PRIME ******* QUADRUPLET! ************* *****************\r")))
 
-			  ((triplet)
-			   (doloop
-				 special-colors
-				 (string-append now-str
-								": ** *** PRIME TRIPLET *********** ************* *****************\r")))
+              ((triplet)
+               (doloop
+                 special-colors
+                 (string-append now-str
+                                ": ** *** PRIME TRIPLET *********** ************* *****************\r")))
 
-			  ((octomus)
-			   (doloop
-				 special-colors
-				 (string-append now-str
-								": ** *** ***** OCTOMUS ***PRIME***\r")))
+              ((octomus)
+               (doloop
+                 special-colors
+                 (string-append now-str
+                                ": ** *** ***** OCTOMUS ***PRIME***\r")))
 
-			  ((sexy)
-			   (doloop
-				 special-colors
-				 (string-append now-str
-								": ** *** *SEXY PRIME**\r")))
+              ((sexy)
+               (doloop
+                 special-colors
+                 (string-append now-str
+                                ": ** *** *SEXY PRIME**\r")))
 
-			  ((cousin)
-			   (doloop
-				 special-colors
-				 (string-append now-str
-								": ** *** PRIME COUSIN* ***********\r")))
+              ((cousin)
+               (doloop
+                 special-colors
+                 (string-append now-str
+                                ": ** *** PRIME COUSIN* ***********\r")))
 
-			  ((twin)
-			   (doloop
-				 special-colors
-				 (string-append now-str
-								": ** *** *TWIN PRIME** *********** *************\r")))
+              ((twin)
+               (doloop
+                 special-colors
+                 (string-append now-str
+                                ": ** *** *TWIN PRIME** *********** *************\r")))
 
-			  ((combo-breaker)
-				 (doloop
-				   prime-colors
-				   (string-append now-str
-								": ** CCC COMBO BREAKER *PRIME*GAP="
-								(number->string (- (list-ref prime-counter 2) 1)) "\r")))
+              ((combo-breaker)
+                 (doloop
+                   prime-colors
+                   (string-append now-str
+                                ": ** CCC COMBO BREAKER *PRIME*GAP="
+                                (number->string (- (list-ref prime-counter 2) 1)) "\r")))
 
-			  (else
-				(doloop
-				  prime-colors
-				  (string-append now-str
-								 ": ** *** PRIME TIME***\r")))))
+              (else
+                (doloop
+                  prime-colors
+                  (string-append now-str
+                                 ": ** *** PRIME TIME***\r")))))
 
-				(let ((factors (subu32vector u32factors 1 (+ 1 n))))
-				  (doloop
-					(cdr c)
-					(string-append now-str ": " (string-join (map number->string (u32vector->list factors))) "\r")
-					(+ 1 prev-prime))))))))
+                (let ((factors (subu32vector u32factors 1 (+ 1 n))))
+                  (doloop
+                    (cdr c)
+                    (string-append now-str ": " (string-join (map number->string (u32vector->list factors))) "\r")
+                    (+ 1 prev-prime))))))))

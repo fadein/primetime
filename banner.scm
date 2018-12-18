@@ -1,4 +1,4 @@
-; vim:set tw=64 expandtab:
+; vim: set expandtab:
 
 (declare (unit banner))
 
@@ -26,10 +26,10 @@ BANNER
 ))
 
 (define (banner attrb)
-    (string-join
-      (map (lambda (str attrb)
-             (set-text '(reverse-video)
-                       (set-text256 attrb str #f))) bannerText attrb)
-      "\r\n"))
+  (string-join
+    (map (lambda (str attrb)
+           (set-text '(reverse-video)
+                     (set-text256 attrb str #f))) bannerText attrb)
+    "\r\n"))
 
 ); module

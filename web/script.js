@@ -89,7 +89,9 @@ function recognizer(counter) {
 
 
 var tick = (() => {
-    var now = Math.trunc((new Date()).getTime() / 1000);
+    var begin = Math.trunc((new Date()).getTime() / 1000);
+    var now = begin;
+    var cons = document.querySelector('#console');
     return () => {
         var f = factors(now);
         var pre = document.createElement('pre');
@@ -152,9 +154,12 @@ var tick = (() => {
             idx++;
 
         pre.style = `color: ${color}`;
-        document.querySelector('#console').appendChild(pre);
+        cons.appendChild(pre);
         pre.scrollIntoView();
-        now++;
+
+        // Remove old lines from top of console to save memory
+        if (now++ - begin > 257)
+            cons.firstElementChild.remove();
     };
 })();
 

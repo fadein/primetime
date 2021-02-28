@@ -1,8 +1,14 @@
 DEST = /usr/local/bin
 CFLAGS = --std=c99
 CSC_OPTIONS = -static
-CSC = /usr/bin/csc
+CSC = csc
+CHICKEN_INSTALL = chicken-install
 
+EGGS = srfi-1 \
+	   srfi-4 \
+	   srfi-13 \
+	   srfi-18 \
+	   ansi-escape-sequences
 OBJS = factor.o recognizer.o banner.o colors-256.o
 
 all: primetime
@@ -24,4 +30,7 @@ clean:
 install: primetime
 	sudo mv primetime $(DEST)
 
-.PHONY: all clean install deploy
+configure:
+	$(CHICKEN_INSTALL) -s $(EGGS)
+
+.PHONY: all clean install deploy configure

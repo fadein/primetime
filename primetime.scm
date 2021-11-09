@@ -156,7 +156,7 @@
                 (doloop
                   prime-colors
                   (string-append now-str
-                                 ": ** *** PRIME TIME***\r")))))
+                                ": ** *** PRIME TIME***\r")))))
 
                 (let ((factors (subu32vector u32factors 1 (+ 1 n))))
                   (doloop

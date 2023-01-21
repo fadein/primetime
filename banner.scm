@@ -8,19 +8,22 @@
 
 (import
   ansi-escape-sequences
+  (chicken time posix)
   (chicken string)
   scheme
   srfi-13)
 
+(define YYY (+ 1900 (vector-ref (seconds->local-time) 5)))
+
 (define bannerText
   (string-split
-  #<<BANNER
-## *** ***** ******* *********** ************* *****************
+  #<#BANNER
+** @@@ ***** ******* *********** ************* *****************
 ** *** ***** ******* *  IT'S PRIME TIME!  **** *****************
 ** *** ***** ******* *   By Erik Falor    **** *****************
 ** *** *****  https://github.com/fadein/primetime **************
-** *** ***** ******* * Copyright (c) 2021 **** *****************
-** *** ***** ******* *********** ************* #################
+** *** ***** ******* * Copyright (c) #YYY **** *****************
+@@ *** ***** ******* *********** ************* *****************
 BANNER
     "\n"
 ))
